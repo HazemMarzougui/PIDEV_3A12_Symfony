@@ -1,0 +1,212 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+  <div class="page-header">
+      <h3 class="page-title">Gestion des Conseils</h3>
+<a class="nav-link btn btn-success create-new-button" id="addConseil_btn" style="margin-left: -750px;" aria-expanded="false" href="#">+ Créer Conseil</a>
+
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content" style="background-color: #191c24;">
+      <div class="modal-header">
+        <h5 class="modal-title" id="myModalLabel">Créer Nouveau Conseil</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #f01111;">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <form id="conseilForm" action="#" method="post" enctype="multipart/form-data">
+          {{ form_widget(fc) }} 
+          <input type="hidden" name="_token" value="{{ csrf_token('add_conseil') }}"> 
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="#">Conseils</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Liste des Conseils</li>
+                </ol>
+              </nav>
+            </div>
+            <div class="row">
+              <div class="col-lg-12 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">Liste des Conseils</h4>
+                    <div class="table-responsive" style="height: 400px; overflow-y: auto; overflow-x: hidden;">
+                <table class="table table-hover">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nom Conseil</th>
+            <th>Video</th>
+            <th>Description</th>
+            <th>Date</th>
+            <th>Categorie</th>
+            <th>Produit</th>
+            <th>Modifier</th>
+            <th>Supprimer</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for element in c %}
+        <tr>
+            <td class="text-success">{{ element.idConseil }}</td>
+            <td>{{ element.nomConseil }}</td>
+            <td>
+                <video width="200" height="150" controls>
+                    <source src="/uploads/conseil/{{ element.video }}" type="video/mp4">
+                </video>
+            </td>
+            <td>{{ element.description }}</td>
+            <td>{{ element.datecreation|date('Y-m-d H:i:s') }}</td>
+            <td class="text-warning">{{ element.idTypec.nomtypec }}</td>
+            <td class="text-warning">{{ element.idProduit.nomProduit }}</td>
+            <td>
+              <button id="update_btn" class="btn btn-outline-warning btn-icon-text edit-btn" data-id="{{ element.idConseil }}">Modifier <i class="mdi mdi-file-check btn-icon-append"></i></button>
+            </td>
+            <td>
+                <a href="{{ path('conseil_delete', {'id': element.idConseil}) }}" class="btn btn-outline-danger btn-icon-text">Supprimer <i class="mdi mdi-file-remove btn-icon-append"></i></a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+      </div>
+
+      <!-- Modal -->
+
+
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- Bootstrap CSS -->
+
+<!-- jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
+{% block JS %}
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    // Handling 'Créer Conseil' button click event
+    document.getElementById("addConseil_btn").addEventListener("click", function() {
+        $('#myModal').modal('show');
+        // Set the form action to 'conseil_add' when 'Créer Conseil' button is clicked
+        test = document.getElementById("conseilForm").action = "{{ path('conseil_add') }}";
+        console.log("Form Action:", test);
+    });
+
+    // Handling 'Modifier' button click event
+    var updateButtons = document.querySelectorAll("#update_btn");
+updateButtons.forEach(function(button) {
+    button.addEventListener("click", function() {
+        $('#myModal').modal('show');
+        // Set the form action to 'conseil_update' when 'Modifier' button is clicked
+        var conseilId = this.getAttribute('data-id');
+        var formAction = "/update/" + conseilId; // Construct the URL manually
+        document.getElementById("conseilForm").action = formAction;
+        console.log("Form Action:", formAction);
+        console.log("Selected ID :", conseilId);
+    });
+});
+
+});
+
+
+/*
+$(document).on("click", ".edit-btn", function () {
+    var conseilId = $(this).data('id'); 
+    console.log("Selected Conseil ID:", conseilId); 
+    
+    $.ajax({
+        url: '{{ path("conseil_update", {"id": "__id__"}) }}'.replace('__id__', conseilId),
+        type: 'GET',
+success: function(response) {
+
+    console.log("AJAX Response:", response);
+
+    var nomConseil = response.nomConseil;
+    var video = response.video;
+    var description = response.description;
+    var idTypec = response.idTypec;
+    var idProduit = response.idProduit;
+
+    // Log the extracted data
+    console.log("Nom Conseil:", nomConseil);
+    console.log("Video:", video);
+    console.log("Description:", description);
+    console.log("ID Typec:", idTypec);
+    console.log("ID Produit:", idProduit);
+
+    // Populate form fields with extracted data
+    $("#conseilForm").find('input[name="conseil[nomConseil]"]').val(nomConseil);
+    $("#conseilForm").find('file[name="conseil[video]"]').val(video);
+    $("#conseilForm").find('input[name="conseil[description]"]').val(description);
+    $("#conseilForm").find('select[name="conseil[idTypec]"]').val(idTypec);
+    $("#conseilForm").find('select[name="conseil[idProduit]"]').val(idProduit);
+    
+    $("#myModal").modal("show");
+},
+
+        error: function(xhr, status, error) {
+            console.error(xhr.responseText);
+        }
+    });
+});*/
+
+
+
+</script>
+{% endblock %}
+
+
+
+    <style>
+    /* WebKit (Chrome, Safari, etc.) */
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background-color: #191c24;
+        border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background-color: #888;
+        border-radius: 10px;
+        border: 2px solid #191c24;
+    }
+
+    #conseilAddedModal {
+    position: fixed;
+    top: 0px; /* Adjust as needed */
+    right: 0px; /* Adjust as needed */
+    z-index: 1050; /* Ensure modal is on top of other elements */
+}
+
+    /* Firefox */
+    scrollbar-color: #888 #191c24;
+</style>
+
+
+
+
+    {% endblock %}

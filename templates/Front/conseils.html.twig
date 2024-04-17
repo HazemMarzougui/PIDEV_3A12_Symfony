@@ -1,0 +1,65 @@
+{% extends 'baseFront.html.twig' %}
+
+{% block body %}
+           <style>
+            .testimonial-item {
+                padding: 100px; /* Adjust the padding to increase the size */
+                margin-bottom: 100px; /* Add margin to separate each list item */
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Adjust the shadow color and intensity as needed */
+                border-radius: 10px;
+            }
+        </style>
+            <div class="container py-5">
+                <div class="testimonial-header text-center">
+                    <h4 class="text-primary">Nos</h4>
+                    <h1 class="display-5 mb-5 text-dark">Conseils <span><h3>({{ number }})</h3></span></h1>
+                </div>
+                <div class="testimonial-list-container">
+                <ul class="testimonial-list">
+                {% for element in c %}
+<li>
+    <div class="testimonial-item img-border-radius bg-light rounded p-5">
+        <div class="position-relative">
+            <i class="fa fa-quote-right fa-2x text-secondary position-absolute" style="bottom: 30px; right: 0;"></i>
+            <div class="mb-4 pb-4 border-bottom border-secondary">
+                <p class="mb-0">{{ element.description }}</p>
+            </div>
+            <div class="d-flex align-items-center flex-nowrap">
+                <div class="bg-success rounded">
+                    <video width="400" height="280" poster="{{ asset('Dash_Admin/assets/images/logoo.png')}}" controls>
+                        <source src="/uploads/conseil/{{ element.video }}" type="video/mp4">
+                    </video>
+                </div>
+                <div class="ms-4 d-block">
+                    <h2 class="text-dark">{{ element.nomConseil }}</h2>
+                    <h5 class="m-0 pb-3">Type : {{ element.idTypec.nomtypec }}</h5>
+                    <p class="m-0 pb-3">Created at: {{ element.datecreation|date('Y-m-d') }}</p>
+                    <div class="d-flex pe-2">
+                        <i class="fas fa-star text-primary"></i>
+                        <i class="fas fa-star text-primary"></i>
+                        <i class="fas fa-star text-primary"></i>
+                        <i class="fas fa-star text-primary"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <br>
+                    <a href="" class="btn btn-primary">Consulter</a>
+                    <br>
+                    <div class="button-container position-absolute bottom-0 end-0 mb-3 me-5">
+                        <a href="https://www.facebook.com/" class="btn btn-link" target="_blank"><i class="fab fa-facebook-square fa-lg"></i></a>
+                        <a href="https://www.instagram.com/" class="btn btn-link" target="_blank"><i class="fab fa-instagram fa-lg"></i></a>
+                        <a href="https://twitter.com/" class="btn btn-link" target="_blank"><i class="fab fa-twitter fa-lg"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</li>
+
+                    <br>
+                    <br>
+                {% endfor %}
+                </ul>
+                </div>
+            </div>
+        </div>
+        {% endblock %}
