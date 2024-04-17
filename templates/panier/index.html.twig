@@ -1,0 +1,228 @@
+{% extends 'base.html.twig' %}
+
+        
+       
+        
+
+        
+
+{% block body %}
+      
+
+
+        <!-- Single Page Header start -->
+        <div class="container-fluid page-header py-5">
+            <h1 class="text-center text-white display-6">Cart</h1>
+            <ol class="breadcrumb justify-content-center mb-0">
+                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                
+                <li class="breadcrumb-item"><a href="#">Pages</a></li>
+                <li class="breadcrumb-item active text-white">Cart</li>
+            </ol>
+
+        </div>
+        <!-- Single Page Header End -->
+
+    <!-- Cart Page Start -->
+   
+
+    <h1>Cart</h1>
+    <table class="table">
+        <!-- Table header -->
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+           {% for item in cartProducts %}
+            <tr>
+                <!-- Product image -->
+                <td>
+                    <img src="img/{{ item.productId }}.jpg" class="img-fluid me-5 rounded-circle" style="width: 80px; height: 80px;" alt="">
+                </td>
+                <!-- Product name -->
+                <td>
+                    <p class="mb-0 mt-4">{{ item.productName }}</p>
+                </td>
+                <!-- Product price -->
+                <td>
+                    <p id="productPrice_{{ item.productId }}" class="mb-0 mt-4">${{ item.productPrice }}</p>
+                </td>
+                <!-- Product quantity -->
+                <td>
+                    <div class="input-group quantity mt-4" style="width: 100px;">
+                        <div class="input-group-btn">
+                            <button class="btn btn-sm btn-minus rounded-circle bg-light border" onclick="updateQuantity('{{ item.productId }}', 'minus', {{ item.productPrice }})">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                        </div>
+                        <input type="text" id="quantity_{{ item.productId }}" class="form-control form-control-sm text-center border-0" value="1">
+                        <div class="input-group-btn">
+                            <button class="btn btn-sm btn-plus rounded-circle bg-light border" onclick="updateQuantity('{{ item.productId }}', 'plus', {{ item.productPrice }})">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </td>
+                <!-- Product total -->
+                <td>
+                    <p id="total_{{ item.productId }}" class="mb-0 mt-4">${{ item.productPrice }}</p>
+                </td>
+                <!-- Remove from cart button -->
+                <td>
+                    <button onclick="removeFromCart('{{ item.productId }}')" class="btn btn-md rounded-circle bg-light border mt-4">
+                        <i class="fa fa-times text-danger"></i>
+                    </button>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div class="mt-5">
+    <input type="text" class="border-0 border-bottom rounded me-5 py-3 mb-4" placeholder="Coupon Code">
+    <button class="btn border-secondary rounded-pill px-4 py-3 text-primary" type="button">Apply Coupon</button>
+</div>
+<div class="row g-4 justify-content-end">
+    <div class="col-8"></div>
+    <div class="col-sm-8 col-md-7 col-lg-6 col-xl-4">
+        <div class="bg-light rounded">
+            <div class="p-4">
+                <h1 class="display-6 mb-4">Cart <span class="fw-normal">Total</span></h1>
+                <div class="py-4 mb-4 border-top border-bottom d-flex justify-content-between">
+                    <h5 class="mb-0 ps-4 me-4">Total</h5>
+                    <p id="cartTotal" class="mb-0 pe-4">${{ cartTotal }}</p>
+                </div>
+                <button id="proceedCheckoutBtn" class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4" type="button">Proceed Checkout</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var productQuantities = {};
+
+  
+
+    function updateCartTotal() {
+        var cartTotal = 0;
+        for (var productId in productQuantities) {
+            var quantity = productQuantities[productId];
+            var productPrice = parseFloat(document.getElementById('productPrice_' + productId).textContent.replace('$', ''));
+            cartTotal += (productPrice * quantity);
+        }
+        document.getElementById('cartTotal').textContent = '$' + cartTotal;
+    }
+
+    function updateQuantity(productId, action, productPrice) {
+        var currentQuantity = productQuantities[productId] || 0;
+
+        if (action == 'plus') {
+            currentQuantity += 1;
+        } else if (action == 'minus' && currentQuantity > 1) {
+            currentQuantity -= 1;
+        }
+
+        productQuantities[productId] = currentQuantity;
+
+        var quantityInput = document.getElementById('quantity_' + productId);
+        quantityInput.value = currentQuantity;
+
+        //updateTotal(productId, productPrice);
+        updateCartTotal();
+
+        // Ajouter ici la logique pour envoyer les données au serveur via AJAX
+        updateQuantityAjax(productId, quantity);
+    }
+
+// Function to update quantity via AJAX
+function updateQuantityAjax(productId, quantity) {
+    // Préparer les données à envoyer
+    var formData = new FormData();
+    formData.append('productId', productId);
+    formData.append('quantity', quantity);
+    formData.append('cartTotal', cartTotal);
+
+    // Effectuer la requête AJAX
+    fetch('/panier/update_quantity', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Mettre à jour l'affichage du prix total avec la valeur renvoyée par le serveur
+        document.getElementById('cartTotal').textContent = '$' + data.cartTotal;
+    })
+    .catch(error => {
+        console.error('Failed to update quantity:', error);
+        // Gérer les erreurs ici
+    });
+}
+
+        // Function to remove item from cart
+        function removeFromCart(productId) {
+            var formData = new FormData();
+            formData.append('productIdToRemove', productId);
+
+            $.ajax({
+                url: '{{ path('remove_from_cart_route') }}',
+                method: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    console.log('Product removed from cart successfully!');
+                    window.location.reload(); // Reload the page after successful removal
+                },
+                error: function(xhr, status, error) {
+                    console.error('Failed to remove product from cart.');
+                    // Add error handling code here
+                }
+            });
+        }
+    </script>
+
+<script>
+const proceedCheckoutBtn = document.getElementById('proceedCheckoutBtn');
+proceedCheckoutBtn.addEventListener('click', function() {
+    // Create an empty array to store quantity data
+    var quantitiesData = [];
+    
+    // Iterate through the products in productQuantities and add the data to the array
+    for (var productId in productQuantities) {
+        quantitiesData.push({
+            productId: productId,
+            quantity: productQuantities[productId]
+        });
+    }
+    
+    // Convert the array to a JSON string
+    var quantitiesDataJSON = JSON.stringify(quantitiesData);
+    
+    // Generate the URL using the path function and include the quantities data as a query parameter
+    const checkoutUrl = '{{ path("app_checkout") }}?quantities=' + encodeURIComponent(quantitiesDataJSON);
+    
+    // Navigate to the checkout URL
+    window.location.href = checkoutUrl;
+});
+
+
+
+    
+</script>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Cart Page End -->
+{% endblock %}
+
+       
