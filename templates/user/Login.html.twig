@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Log In | ArtyVenci </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="./images/logo.png" type="image/icon type">
+<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'>
+<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/typicons/2.0.9/typicons.min.css'>
+<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css'>
+<link rel="stylesheet" href="{{asset('css/style.css')}}" >
+
+</head>
+<body>
+  <link href='https://fonts.googleapis.com/css?family=Lato:300,400,700' rel='stylesheet' type='text/css'>
+  <div id='stars'></div>
+  <div id='stars2'></div>
+  <div id='stars3'></div>
+
+
+<body id="particles-js"></body>
+<div class="animated bounceInDown">
+  <div class="container">
+    <span class="error animated tada" id="msg"></span>
+    <form name="form1" class="box" onsubmit="return checkStuff()">
+      <img src="{{asset('img/logo.png')}}" alt="ArtyVnci"style="width: 35%;">
+     
+      <h5>Sign in to your account.</h5>
+
+        <input type="text" name="username" placeholder="Username" autocomplete="off">
+        <i class="typcn typcn-eye" id="eye" style="top: 285px "></i>
+        <input type="password" name="password" placeholder="Passsword" id="pwd" autocomplete="off">
+        <label>
+          <input type="checkbox">
+          <span></span>
+          <small class="rmb">Remember me</small>
+        </label>
+        <a href="#" class="forgetpass">Forget Password?</a>
+        <input type="submit" value="Sign in" class="btn1">
+      </form>
+     
+      <div class="a b c ">
+        <div class="slide"></div>
+        <div class="lab">or</div>
+        <div class="slide"></div>
+      </div>
+
+        <a href="{{path('signup')}}" class="dnthave">Join ArtyVenci</a>
+  </div> 
+ 
+       
+</div>
+<!-- partial -->
+  <script src='https://cldup.com/S6Ptkwu_qA.js'></script><script  src="{{asset('js/script.js')}}"></script>
+
+</body>
+</html>
+

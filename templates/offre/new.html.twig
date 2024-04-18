@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Offre{% endblock %}
+
+{% block body %}
+<!-- ======= Hero Section ======= -->
+<section class="d-flex flex-column justify-content-center align-items-center" data-aos="fade" data-aos-delay="1500">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 text-center">
+                {{ form_start(f, {'attr': {'novalidate': 'novalidate'}}) }}
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            {{ form_label(f.montantRemise, 'Montant Remise') }}
+                            {{ form_widget(f.montantRemise, {'attr': {'class': 'form-control', 'style': form_errors(f.montantRemise) ? 'border-color: #ad1328;' : '', 'placeholder': 'Veuillez entrer le montant de la remise'}}) }}
+                            <div class="text" role="alert" style="color: #ad1328;">{{ form_errors(f.montantRemise) }}</div>
+                        </div>
+
+                        <div class="form-group">
+                            {{ form_label(f.dateDebut, 'Date Début') }}
+                            {{ form_widget(f.dateDebut, {'attr': {'class': 'form-control', 'style': form_errors(f.dateDebut) ? 'border-color: #ad1328;' : '', 'placeholder': 'Veuillez sélectionner la date de début'}}) }}
+                            <div class="text" role="alert" style="color: #ad1328;">{{ form_errors(f.dateDebut) }}</div>
+                        </div>
+
+                        <div class="form-group">
+                            {{ form_label(f.dateFin, 'Date Fin') }}
+                            {{ form_widget(f.dateFin, {'attr': {'class': 'form-control', 'style': form_errors(f.dateFin) ? 'border-color: #ad1328;' : '', 'placeholder': 'Veuillez sélectionner la date de fin'}}) }}
+                            <div class="text" role="alert" style="color: #FFFF;">{{ form_errors(f.dateFin) }}</div>
+                        </div>
+
+                        <div class="form-group">
+                            {{ form_label(f.description, 'Description') }}
+                            {{ form_widget(f.description, {'attr': {'class': 'form-control', 'style': form_errors(f.description) ? 'border-color: #ad1328;' : '', 'placeholder': 'Veuillez entrer la description'}}) }}
+                            <div class="text" role="alert" style="color: #FFFF;">{{ form_errors(f.description) }}</div>
+                        </div>
+
+                        <!-- Stylish display for Evenement -->
+                        <div class="form-group">
+                            {{ form_label(f.evenement, 'Evenement') }}
+                            {{ form_widget(f.evenement, {'attr': {'class': 'form-control', 'style': form_errors(f.evenement) ? 'border-color: ##FFFF;' : '', 'placeholder': 'Veuillez sélectionner l\'événement'}}) }}
+                            <div class="text" role="alert" style="color: #FFFF;">{{ form_errors(f.evenement) }}</div>
+                        </div>
+
+                        <!-- Stylish display for IdProduitOffre -->
+                        <div class="form-group">
+                            {{ form_label(f.idProduitOffre, 'ID Produit Offre') }}
+                            {{ form_widget(f.idProduitOffre, {'attr': {'class': 'form-control', 'style': form_errors(f.idProduitOffre) ? 'border-color: ##FFFF;' : '', 'placeholder': 'Veuillez entrer l\'ID Produit Offre'}}) }}
+                            <div class="text" role="alert" style="color: #FFFF;">{{ form_errors(f.idProduitOffre) }}</div>
+                        </div>
+
+                        <!-- Submit button -->
+                        <div class="d-flex mt-3 justify-content-end">
+                            <button type="submit" class="btn btn-primary"><i class="bi bi-download"></i> Submit</button>
+                        </div>
+                    </div>
+                </div>
+                {{ form_end(f)}}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

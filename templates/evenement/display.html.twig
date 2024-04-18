@@ -1,0 +1,60 @@
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Display Events{% endblock %}
+
+{% block body %}
+<style>
+    .DisplayTable  {
+        text-align: left; 
+        padding : 10px;
+        margin : 10px;
+    }
+    th,td {
+      padding-right: 15px;
+    }
+</style>
+  <!-- ======= Hero Section ======= -->
+  <div class="row ">
+              <div class="col-12 grid-margin">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">EVENTS</h4>
+                    <div class="table-responsive">
+                      <table class="table">
+                        <thead>
+                          <tr>
+            <th>Nom</th>
+            <th>Description</th>
+            <th>DateDebut</th>
+            <th>DateFin</th>
+            <th>Actions</th>
+            </tr>
+                        </thead>
+                        <tbody>
+                          {% for f in evenements %}
+                <tr>
+                    <td>{{ f.nomEvent }}</td>    
+                    <td>{{ f.description }}</td>
+                    <td>{{ f.getDateDebut| date("d/m/Y") }}</td>
+                    <td>{{ f.getDateFin| date("d/m/Y") }}</td>
+                    <td>
+                      <a href="{{ path('app_update_evenement', {'idEvenement': f.idEvenement}) }}" class="btn btn-success btn-sm">Update<i class="bi bi-eye"></i></a>
+                      <a href="{{ path('app_delete_evenement', {'id': f.idEvenement}) }}"
+                                        class="btn btn-success btn-sm"
+                                        onclick="return confirm('Are you sure you want to delete this event?')">Delete</a>
+                      <a href="{{ path('app_offre_jdida', {'idEvent': f.idEvenement}) }}" class="btn btn-success btn-sm">Offre<i class="bi bi-eye"></i></a>
+                    </td>
+                </tr>
+            {% endfor %}
+                          
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+    
+  
+{% endblock %}

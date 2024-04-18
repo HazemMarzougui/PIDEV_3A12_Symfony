@@ -1,0 +1,122 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}maison{% endblock %}
+
+{% block body %}
+    <style>
+        /* Nouveaux styles CSS */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        .container {
+            width: 60%;
+            margin: auto;
+            overflow: hidden;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .left-container {
+            float: left;
+            width: 60%;
+            margin-right: 20px;
+            text-align: center;
+        }
+
+        .right-container {
+            float: right;
+            margin-right: 130px;
+            width: 20%;
+ }
+
+        .detail {
+            margin-bottom: 10px;
+        }
+
+        .detail label {
+            font-weight: bold;
+            display: inline-block;
+            width: 100px;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            max-height: 200px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .image-container img:hover {
+            transform: scale(1.05);
+        }
+
+        .modal-body {
+            text-align: center;
+        }
+
+        .modal-content {
+            border-radius: 8px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+ background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+
+    
+
+   
+            
+
+<div class="container">
+    <div class="left-container image-container">
+        <h1>{{ evenement.nomEvent }}</h1>
+        
+    </div>
+
+    <div class="right-container">
+        <div class="detail">
+            <label>Description:</label>
+            <div>{{ evenement.description }}</div>
+        </div>
+
+        <div class="detail">
+            <label>Date Debut:</label>
+            <div>{{ evenement.dateDebut }}</div>
+        </div>
+
+        <div class="detail">
+            <label>Date Fin:</label>
+            <div>{{ evenement.dateFin }}</div>
+        </div>
+
+                <h2>Offers for this Event:</h2>
+        <ul>
+            {% for offer in offers %}
+                <li>{{ offer.name }} - {{ offer.description }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+ <div style="text-align: center; margin-top: 20px;">
+    <a href="{{ path('app_list_evenements') }}" class="btn">Retour à la liste</a>
+</div> 
+{% endblock %}

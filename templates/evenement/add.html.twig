@@ -1,0 +1,50 @@
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Display Events{% endblock %}
+
+{% block body %}
+    <!-- ======= Hero Section ======= -->
+  <section  class=" d-flex flex-column justify-content-center align-items-center" data-aos="fade" data-aos-delay="1500">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-6 text-center">
+            {{ form_start(f, {'attr': {'novalidate': 'novalidate'}}) }}
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            {{ form_label(f.nomEvent, 'Nom Event') }}
+                            {{ form_widget(f.nomEvent, {'attr': {'class': 'form-control', 'style': form_errors(f.nomEvent) ? 'border-color: #ad1328;' : '', 'placeholder': 'Veuillez entrer le nom de votre Evenement'}}) }}
+                            <div class="text" role="alert" style="color: #ad1328;">{{ form_errors(f.nomEvent) }}</div>
+                        </div>
+
+                        <div class="form-group">
+                            {{ form_label(f.dateDebut, 'Date Debut') }}
+                            {{ form_widget(f.dateDebut, {'attr': {'class': 'form-control', 'style': form_errors(f.dateDebut) ? 'border-color: #ad1328;' : '', 'placeholder': 'Veuillez entrer la date de debut de votre Evenement'}}) }}
+                            <div class="text" role="alert" style="color: #ad1328;">{{ form_errors(f.dateDebut) }}</div>
+                        </div>
+
+                        <div class="form-group">
+                            {{ form_label(f.dateFin, 'Date Fin') }}
+                            {{ form_widget(f.dateFin, {'attr': {'class': 'form-control', 'style': form_errors(f.dateFin) ? 'border-color: #ad1328;' : '', 'placeholder': 'Veuillez entrer la date de fin de votre Evenement'}}) }}
+                            <div class="text" role="alert" style="color: #ad1328;">{{ form_errors(f.dateFin) }}</div>
+                        </div>
+
+                        <div class="form-group">
+                            {{ form_label(f.description, 'Description') }}
+                            {{ form_widget(f.description, {'attr': {'class': 'form-control', 'style': form_errors(f.description) ? 'border-color: #ad1328;' : '', 'placeholder': 'Veuillez entrer la description de votre Evenement'}}) }}
+                            <div class="text" role="alert" style="color: #ad1328;">{{ form_errors(f.description) }}</div>
+                        </div>
+                        <div class="d-flex  mt-3 justify-content-end">
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-download"></i></button>
+                    
+                </div>
+
+                {{ form_end(f) }}
+                    </div>
+                        </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}
