@@ -1,0 +1,106 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+  <div class="page-header">
+      <h3 class="page-title">Gestion des Utilisateurs</h3>
+<a class="nav-link btn btn-success create-new-button" href="{{ path('user_add')}}" id="createbuttonDropdown" style="margin-left: -500px;" aria-expanded="false" >+ Créer Utilisateur</a>
+
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="#">Utilisateurs</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Liste des Utilisateurs</li>
+                </ol>
+              </nav>
+            </div>
+            <div class="row">
+              <div class="col-lg-12 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">Liste des Utilisateurs</h4>
+                    <div class="table-responsive" style="height: 400px; overflow-y: auto; overflow-x: auto;">
+                <table class="table table-hover">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Email</th>
+            <th>Password</th>
+            <th>Nom</th>
+            <th>Prenom</th>
+            <th>Telephone</th>
+            <th>Adresse</th>
+            <th>Date Naissance</th>
+            <th>Description</th>
+            <th>Modifier</th>
+            <th>Supprimer</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for element in c %}
+        <tr>
+            <td class="text-success">{{ element.id }}</td>
+            <td>{{ element.email }}</td>
+            <td>{{ element.password }}</td>
+            <td>{{ element.nom }}</td>
+            <td>{{ element.prenom }}</td>
+            <td>{{ element.tel }}</td>
+            <td>{{ element.adresse }}</td>
+            <td>{{ element.dateNaiss|date('Y-m-d') }}</td>
+            <td class="text-warning">{{ element.description }}</td>
+            <td>
+<a href="{{ path('user_update', {'id': element.id }) }}" class="btn btn-outline-warning btn-icon-text edit-btn">
+    Modifier <i class="mdi mdi-file-check btn-icon-append"></i>
+</a>            </td>
+            <td>
+                <a  href="{{ path('user_delete' , {'id': element.id })}}" class="btn btn-outline-danger btn-icon-text">Supprimer <i class="mdi mdi-file-remove btn-icon-append"></i></a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+      </div>
+
+      <!-- Modal -->
+
+
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- Bootstrap CSS -->
+
+<!-- jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <style>
+    /* WebKit (Chrome, Safari, etc.) */
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background-color: #191c24;
+        border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background-color: #888;
+        border-radius: 10px;
+        border: 2px solid #191c24;
+    }
+
+    #conseilAddedModal {
+    position: fixed;
+    top: 0px; /* Adjust as needed */
+    right: 0px; /* Adjust as needed */
+    z-index: 1050; /* Ensure modal is on top of other elements */
+}
+    scrollbar-color: #888 #191c24;
+</style>
+    {% endblock %}
