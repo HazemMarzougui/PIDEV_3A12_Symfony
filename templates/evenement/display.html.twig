@@ -44,6 +44,7 @@
                                         class="btn btn-success btn-sm"
                                         onclick="return confirm('Are you sure you want to delete this event?')">Delete</a>
                       <a href="{{ path('app_offre_jdida', {'idEvent': f.idEvenement}) }}" class="btn btn-success btn-sm">Offre<i class="bi bi-eye"></i></a>
+                      <a href="{{ path('export_events_excel') }}" class="btn btn-success">Export to Excel</a>
                     </td>
                 </tr>
             {% endfor %}

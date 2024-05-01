@@ -13,6 +13,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Dompdf\Dompdf;
+use Dompdf\Options;
+
 
 
 
@@ -37,6 +40,34 @@ class OffreController extends AbstractController
         ]);
     }
 
+    #[Route('/ExportPdf/{idEvent}', name: 'app_pdf', methods: ['GET', 'POST'])]
+public function ExportPdf($idEvent, OffreRepository $offreRepository): Response
+{
+    $idEvent = (int)$idEvent;
+    $offres = $offreRepository->getOffersByEvent($idEvent);
+
+    $options = new Options();
+    $options->set('defaultFont', 'Arial');
+
+    $dompdf = new Dompdf($options);
+    $html = $this->renderView('Offre/pdf.html.twig', [
+        'offres' => $offres,
+        'idEvent' => $idEvent // Passer l'id de l'événement si nécessaire
+    ]);
+
+    $dompdf->loadHtml($html);
+
+    // (Optional) Set paper size and orientation
+    $dompdf->setPaper('A4', 'portrait'); // Portrait pour les cartes
+
+    // Render the HTML as PDF
+    $dompdf->render();
+
+    // Output the generated PDF to browser (inline view)
+    return new Response($dompdf->output(), 200, [
+        'Content-Type' => 'application/pdf',
+    ]);
+}
 
     #[Route('/offre/new', name: 'app_offre_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, ValidatorInterface $validator): Response

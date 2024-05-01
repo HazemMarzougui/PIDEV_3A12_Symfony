@@ -27,6 +27,9 @@
                 <td>
                     <a href="{{ path('app_offre_show', {'idOffre': offre.idOffre}) }}">Show</a>
                     <a href="{{ path('app_offre_edit', {'idOffre': offre.idOffre}) }}">Edit</a>
+                    {% if offre.idProduitOffre is not empty %}
+     <a href="{{ path('app_pdf', {'idEvent': offre.evenement.idEvenement }) }}">Exporter Offre</a>
+{% endif %}
                 </td>
             </tr>
         {% else %}

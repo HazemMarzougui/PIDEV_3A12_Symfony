@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Controller;
-
+use App\Service\TwilioSMSService;
 use App\Entity\Evenement;
 use App\Form\EvenementType;
 use App\Repository\EvenementRepository;
@@ -13,6 +13,13 @@ use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\Filesystem\Filesystem;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use Twilio\Rest\Client;
+
 
 class EvenementController extends AbstractController
 {
@@ -34,6 +41,42 @@ class EvenementController extends AbstractController
         ]);
     }
 
+
+    #[Route('/allevents/export', name: 'export_events_excel')]
+     public function exportEventsExcel(EvenementRepository $repo): Response
+    {
+        // Retrieve reservations from the database
+        $events = $repo->findAll();
+
+        // Create a new Spreadsheet
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Add headers
+        $headers = ['Nom', 'Date Debut', 'Date Fin', 'Description'];
+        foreach ($headers as $index => $header) {
+            $sheet->setCellValue(Coordinate::stringFromColumnIndex($index + 1) . '1', $header);
+        }
+
+        // Add reservation data
+        foreach ($events as $rowIndex => $event) {
+            $sheet->setCellValue('A' . ($rowIndex + 2), $event->getNomEvent());
+            $sheet->setCellValue('B' . ($rowIndex + 2), $event->getDateDebut());
+            $sheet->setCellValue('C' . ($rowIndex + 2), $event->getDateFin());
+            $sheet->setCellValue('D' . ($rowIndex + 2), $event->getDescription());
+        }
+
+        // Save Excel file
+        $excelFilename = 'events_export.xlsx';
+        $excelFilePath = $this->getParameter('kernel.project_dir') . '/public/' . $excelFilename;
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($excelFilePath);
+
+        // Return the Excel file as a BinaryFileResponse
+        return new BinaryFileResponse($excelFilePath);
+    }
+
     #[Route('/evenementlistF', name: 'app_list')]
     public function getAll1(EvenementRepository $repo): Response
     {
@@ -44,56 +87,73 @@ class EvenementController extends AbstractController
     }
 
    // Add an Evenement
-#[Route('/evenementadd', name: 'app_add_evenement')]
-public function addEvenement(Request $request, ManagerRegistry $manager, ValidatorInterface $validator): Response
-{
-    $newEvenement = new Evenement();
-    $form = $this->createForm(EvenementType::class, $newEvenement);
-    $form->handleRequest($request);
+   
+   #[Route('/evenementadd', name: 'app_add_evenement')]
+   public function addEvenement(Request $request, ManagerRegistry $manager, ValidatorInterface $validator ): Response
+   {
+       $newEvenement = new Evenement();
+       $form = $this->createForm(EvenementType::class, $newEvenement);
+       $form->handleRequest($request);
 
-    if ($form->isSubmitted() && $form->isValid()) {
-        // Manually validate date fields
-        $dateDebut = $newEvenement->getDateDebut();
-        $dateFin = $newEvenement->getDateFin();
+       if ($form->isSubmitted() && $form->isValid()) {
+           // Manually validate date fields
+           $dateDebut = $newEvenement->getDateDebut();
+           $dateFin = $newEvenement->getDateFin();
 
-        // Validate dateDebut
-        if ($dateDebut !== null) {
-            $errors = $validator->validate($dateDebut, [
-                new Assert\DateTime(['message' => 'La date de début doit être une date valide.'])
-            ]);
+           // Validate dateDebut
+           if ($dateDebut !== null) {
+               $errors = $validator->validate($dateDebut, [
+                   new Assert\DateTime(['message' => 'La date de début doit être une date valide.'])
+               ]);
 
-            if (count($errors) > 0) {
-                // Handle validation errors
-            }
-        }
+               if (count($errors) > 0) {
+                   // Handle validation errors
+               }
+           }
 
-        // Validate dateFin
-        if ($dateFin !== null) {
-            $errors = $validator->validate($dateFin, [
-                new Assert\DateTime(['message' => 'La date de fin doit être une date valide.']),
-                new Assert\GreaterThanOrEqual([
-                    'value' => $dateDebut,
-                    'message' => 'La date de fin doit être supérieure ou égale à la date de début.'
-                ])
-            ]);
+           // Validate dateFin
+           if ($dateFin !== null) {
+               $errors = $validator->validate($dateFin, [
+                   new Assert\DateTime(['message' => 'La date de fin doit être une date valide.']),
+                   new Assert\GreaterThanOrEqual([
+                       'value' => $dateDebut,
+                       'message' => 'La date de fin doit être supérieure ou égale à la date de début.'
+                   ])
+               ]);
 
-            if (count($errors) > 0) {
-                // Handle validation errors
-            }
-        }
+               if (count($errors) > 0) {
+                   // Handle validation errors
+               }
+           }
 
-        // If all validation passes, persist the new Evenement
-        $manager->getManager()->persist($newEvenement);
-        $manager->getManager()->flush();
+           // If all validation passes, persist the new Evenement
+           $manager->getManager()->persist($newEvenement);
+           $manager->getManager()->flush();
 
-        return $this->redirectToRoute('app_list_evenements');
-    }
+         // $sid = $this->getParameter('');
+        //  $token = $this->getParameter('');
+          $twilioClient = new TwilioSMSService('','');
 
-    return $this->render('evenement/add.html.twig', [
-        'f' => $form->createView(),
-    ]);
-}
+           // Send SMS using Twilio
+           try {
+            $twilioSMSService->sendSMS(
+                '+21653658515', // to
+                "New event 
+                   added: " . $newEvenement->getNomEvent() . " on " . $newEvenement->getDateDebut()->format('Y-m-d')
+            );
 
+            // Handle success or log the message SID
+        } catch (\Exception $e) {
+               // Handle Twilio API exception
+           }
+
+           return $this->redirectToRoute('app_list_evenements');
+       }
+
+       return $this->render('evenement/add.html.twig', [
+           'f' => $form->createView(),
+       ]);
+   }
 // #[Route('/{idEvenement}', name: 'app_delete_evenement', methods: ['POST'])]
 //     public function delete(Request $request, Evenement $evenement, EntityManagerInterface $entityManager): Response
 //     {
