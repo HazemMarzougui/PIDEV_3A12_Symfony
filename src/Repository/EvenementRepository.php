@@ -21,6 +21,21 @@ class EvenementRepository extends ServiceEntityRepository
         parent::__construct($registry, Evenement::class);
     }
 
+  /**
+     * Search events by name.
+     *
+     * @param string $name The name to search for.
+     * @return Evenement[] Returns an array of Evenement objects.
+     */
+    public function searchByName(string $name): array
+    {
+        return $this->createQueryBuilder('e')
+            ->andWhere('e.nomEvent LIKE :name')
+            ->setParameter('name', '%' . $name . '%')
+            ->getQuery()
+            ->getResult();
+    }
+
 //    /**
 //     * @return Evenement[] Returns an array of Evenement objects
 //     */

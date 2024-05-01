@@ -1,0 +1,10 @@
+{# templates/evenement/search_results.html.twig #}
+
+{% for evenement in evenements %}
+    <div>
+        <h2>{{ evenement.nomEvent }}</h2>
+        <p>Description: {{ evenement.description }}</p>
+        <p>Date Debut: {{ evenement.dateDebut|date('Y-m-d') }}</p>
+        <p>Date Fin: {{ evenement.dateFin|date('Y-m-d') }}</p>
+    </div>
+{% endfor %}

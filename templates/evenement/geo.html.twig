@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>OpenStreetMap Example</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+</head>
+<body>
+    <div id="map" style="height: 400px;"></div>
+    <button onclick="getLocation()">Get Location</button>
+    <div id="locationInfo"></div>
+    <form method="post" action="{{ path('save_location') }}">
+        <input type="hidden" id="userLocation" name="userLocation" value="">
+        <button type="submit">Save Location</button>
+    </form>
+    
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        var userLocation = [];
+        var map = L.map('map').setView([51.505, -0.09], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    userLocation = [position.coords.latitude, position.coords.longitude];
+                    map.setView(userLocation, 13);
+                    L.marker(userLocation).addTo(map)
+                        .bindPopup('Your Location')
+                        .openPopup();
+                    document.getElementById("userLocation").value = userLocation.join(",");
+                });
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+
+        map.on('click', function(e) {
+            var coordinates = e.latlng;
+            var url = "https://nominatim.openstreetmap.org/reverse?format=json&lat=" + coordinates.lat + "&lon=" + coordinates.lng;
+            
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("locationInfo").innerHTML = "Location: " + data.display_name + "<br>Coordinates: " + coordinates.lat + ", " + coordinates.lng;
+                })
+                .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>

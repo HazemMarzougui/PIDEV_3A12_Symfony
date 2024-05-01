@@ -19,10 +19,29 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\Filesystem\Filesystem;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use Twilio\Rest\Client;
+use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Writer\PngWriter;
+use Endroid\QrCodeBundle\Response\QrCodeResponse;
+use Psr\Log\LoggerInterface;
+
+use Endroid\QrCode\Builder\Builder;
+use Endroid\QrCode\Encoding\Encoding;
+use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelHigh;
+use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeMargin;
+
+use Endroid\QrCode\Encoding\ErrorCorrectionLevel;
+
 
 
 class EvenementController extends AbstractController
 {
+
+ 
+  
+
+
     #[Route('/evenement', name: 'app_evenement')]
     public function index(): Response
     {
@@ -77,19 +96,140 @@ class EvenementController extends AbstractController
         return new BinaryFileResponse($excelFilePath);
     }
 
-    #[Route('/evenementlistF', name: 'app_list')]
-    public function getAll1(EvenementRepository $repo): Response
-    {
-        $evenements = $repo->findAll();
-        return $this->render('baseF.html.twig', [
+
+
+    #[Route('/search/evenements', name: 'app_search_evenement_by_name')]
+    public function searchEvenementsByName(Request $request, EvenementRepository $evenementRepository): Response
+      {
+        $searchTerm = $request->query->get('q');
+        
+        // Perform the search in the repository
+        $evenements = $evenementRepository->searchByName($searchTerm);
+        
+        // Render the search results as HTML (assuming you have a Twig template for rendering)
+        return $this->render('evenement/search_results.html.twig', [
             'evenements' => $evenements,
         ]);
     }
 
-   // Add an Evenement
+
+     
+
+
+    #[Route('/evenementlistF', name: 'app_list')]
+    public function getAll1(
+        EvenementRepository $repo, 
+        PaginatorInterface $paginatorInterface,
+        Request $request 
+       
+    ): Response {
+        $searchTerm = $request->query->get('q');
+
+        if ($request->isXmlHttpRequest() && $searchTerm) {
+            // Perform search query based on the search term
+            $data = $repo->search($searchTerm);
+        } else {
+            
+            $data = $repo->findAll();
+        }
+
+       
+        $evenements = $paginatorInterface->paginate(
+            $data,
+            $request->query->getInt('page', 1),
+            5
+        );
+
+        
+
+      
+
+        if ($request->isXmlHttpRequest()) {
+            
+            return new JsonResponse([
+                'html' => $this->renderView('evenement/partial/evenement_list.html.twig', ['evenements' => $evenements]),
+            ]);
+        }
+
+        
+        return $this->render('baseF.html.twig', [
+            'evenements' => $evenements,
+        
+           
+        ]);
+    }
+    
+    #[Route("/save_location", name: "save_location", methods: ["POST"])]
+    public function saveLocation(Request $request, LoggerInterface $logger): Response
+    {
+        // Récupérer la localisation à partir des données du formulaire
+        $userLocation = $request->request->get('userLocation');
+        
+        // Vous pouvez ensuite traiter $userLocation selon vos besoins, par exemple, le stocker en base de données
+        
+        // Exemple pour le logger pour le moment
+        $logger->info('Location saved: '.$userLocation);
+
+        // Vous pouvez rediriger l'utilisateur vers une autre page ou retourner une réponse JSON
+        $response = new JsonResponse([
+            'message' => 'Location saved successfully',
+            'location' => $userLocation
+        ]);
+        
+        $renderedView = $this->render('evenement/geo.html.twig', [
+            'userLocation' => $userLocation
+        ]);
+        
+        // Créer une réponse combinée
+        $combinedResponse = new Response();
+        $combinedResponse->setContent($renderedView->getContent() . $response->getContent());
+        
+        // Définir le type de contenu comme HTML
+        $combinedResponse->headers->set('Content-Type', 'text/html');
+        
+        // Retourner la réponse combinée
+        return $combinedResponse;
+    }     
+
+   
+   #[Route('/generate-qr/{id}', name: 'event_generate_qr')]
+   public function generateQrCode($id, EvenementRepository $evenementRepository): Response
+   {
+      
+       $evenement = $evenementRepository->find($id);
+       
+     
+       $qrCodeText = sprintf(
+        
+           "Event ID: %d\nNom: %s\nDate Début: %s\nDate Fin: %s\nDescription: %s",
+           $evenement->getIdEvenement(),
+           $evenement->getNomEvent(),
+           $evenement->getDateDebut()->format('Y-m-d'),
+           $evenement->getDateFin()->format('Y-m-d'),
+           $evenement->getDescription()
+       );
+   
+      
+       $qrCode = Builder::create()
+           ->writer(new PngWriter())
+           ->data($qrCodeText)
+           ->encoding(new Encoding('UTF-8'))
+           ->size(200)
+           ->margin(10)
+           ->build();
+   
+      
+       $response = new Response($qrCode->getString(), Response::HTTP_OK, [
+        'Content-Type' => 'image/png',
+    ]);
+    
+   
+       return $response;
+   }
+
    
    #[Route('/evenementadd', name: 'app_add_evenement')]
-   public function addEvenement(Request $request, ManagerRegistry $manager, ValidatorInterface $validator ): Response
+   public function addEvenement(Request $request, ManagerRegistry $manager, ValidatorInterface $validator ,EvenementRepository $evenementRepository ): Response
    {
        $newEvenement = new Evenement();
        $form = $this->createForm(EvenementType::class, $newEvenement);
@@ -130,22 +270,7 @@ class EvenementController extends AbstractController
            $manager->getManager()->persist($newEvenement);
            $manager->getManager()->flush();
 
-         // $sid = $this->getParameter('');
-        //  $token = $this->getParameter('');
-          $twilioClient = new TwilioSMSService('','');
-
-           // Send SMS using Twilio
-           try {
-            $twilioSMSService->sendSMS(
-                '+21653658515', // to
-                "New event 
-                   added: " . $newEvenement->getNomEvent() . " on " . $newEvenement->getDateDebut()->format('Y-m-d')
-            );
-
-            // Handle success or log the message SID
-        } catch (\Exception $e) {
-               // Handle Twilio API exception
-           }
+        
 
            return $this->redirectToRoute('app_list_evenements');
        }
