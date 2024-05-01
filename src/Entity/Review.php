@@ -2,14 +2,12 @@
 
 namespace App\Entity;
 
+use App\Repository\ReviewRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Review
- *
- * @ORM\Table(name="review", indexes={@ORM\Index(name="id_conseil", columns={"id_conseil"})})
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="App\Repository\ReviewRepository")
  */
 class Review
 {

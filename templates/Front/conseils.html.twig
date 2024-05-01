@@ -30,26 +30,22 @@
                                 </div>
                                 <div class="mb-4">
                                     <h4>Categories</h4>
-                                    <ul class="list-unstyled fruite-categorie">
-                                        <li>
-                                            <div class="d-flex justify-content-between fruite-name">
-                                                <a href="#"><i class="fas fa-apple-alt me-2"></i>Gagner du Poids</a>
-                                                <span>(3)</span>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="d-flex justify-content-between fruite-name">
-                                                <a href="#"><i class="fas fa-apple-alt me-2"></i>Perdre du Poids</a>
-                                                <span>(5)</span>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="d-flex justify-content-between fruite-name">
-                                                <a href="#"><i class="fas fa-apple-alt me-2"></i>Stabiliser du Poids</a>
-                                                <span>(2)</span>
-                                            </div>
-                                        </li>
-                                    </ul>
+<ul class="list-unstyled fruite-categorie">
+    <li>
+        <div class="d-flex justify-content-between fruite-name">
+            <a href="{{ path('getAllFront') }}">Toutes les Catégories</a>
+            <span>({{ number }})</span>
+        </div>
+    </li>
+    {% for category in categories %}
+        <li>
+            <div class="d-flex justify-content-between fruite-name">
+                <a href="{{ path('getAllFront', {'category': category.idtypec}) }}">{{ category.nomtypec }}</a>
+            </div>
+        </li>
+    {% endfor %}
+</ul>
+
                                 </div>
                             </div>
                             <div class="col-lg-12">
@@ -140,14 +136,7 @@
     <!-- Pagination -->
     <div class="col-12">
         <div class="pagination d-flex justify-content-center mt-5">
-            <a href="#" class="rounded">&laquo;</a>
-            <a href="#" class="active rounded">1</a>
-            <a href="#" class="rounded">2</a>
-            <a href="#" class="rounded">3</a>
-            <a href="#" class="rounded">4</a>
-            <a href="#" class="rounded">5</a>
-            <a href="#" class="rounded">6</a>
-            <a href="#" class="rounded">&raquo;</a>
+            {{ knp_pagination_render(c) }}
         </div>
     </div>
 </div>

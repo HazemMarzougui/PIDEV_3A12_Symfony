@@ -45,4 +45,14 @@ class TypeConseilRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+
+public function findByCategory($name)
+{
+    return $this->createQueryBuilder('c')
+                ->andWhere('a.name = :name')
+                ->setParameter('name' , $name)
+                ->getQuery()
+                ->getResult();
+}
+
 }

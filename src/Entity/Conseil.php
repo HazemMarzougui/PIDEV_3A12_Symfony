@@ -14,43 +14,61 @@ use Doctrine\ORM\Mapping as ORM;
 class Conseil
 {
     /**
+     * @var int
+     *
+     * @ORM\Column(name="id_conseil", type="integer", nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private ?int $idConseil;
-
-      /**
-     * @ORM\Column(length=255)
-     */
-    private ?string $nomConseil;
-
-      /**
-     * @ORM\Column(length=255)
-     */
-    private ?string $video;
-
-      /**
-     * @ORM\Column(length=255)
-     */
-    private ?string $description;
+    private $idConseil;
 
     /**
- * @ORM\Column(type="datetime", nullable=false, options={"default": "CURRENT_TIMESTAMP"})
- */
-    private ?\DateTimeInterface $datecreation;
+     * @var string
+     *
+     * @ORM\Column(name="nom_conseil", type="string", length=255, nullable=false)
+     */
+    private $nomConseil;
 
     /**
- * @ORM\ManyToOne(targetEntity=Produit::class)
- * @ORM\JoinColumn(name="id_produit", referencedColumnName="id_produit")
- */
-    private ?Produit $idProduit;
+     * @var string
+     *
+     * @ORM\Column(name="video", type="string", length=255, nullable=false)
+     */
+    private $video;
 
     /**
- * @ORM\ManyToOne(targetEntity=Typeconseil::class)
- * @ORM\JoinColumn(name="id_typeC", referencedColumnName="idTypeC")
- */
-    private ?Typeconseil $idTypec;
+     * @var string
+     *
+     * @ORM\Column(name="description", type="string", length=255, nullable=false)
+     */
+    private $description;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="dateCreation", type="datetime", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
+     */
+    private $datecreation = 'CURRENT_TIMESTAMP';
+
+    /**
+     * @var \Typeconseil
+     *
+     * @ORM\ManyToOne(targetEntity="Typeconseil")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="id_typeC", referencedColumnName="idTypeC")
+     * })
+     */
+    private $idTypec;
+
+    /**
+     * @var \Produit
+     *
+     * @ORM\ManyToOne(targetEntity="Produit")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="id_produit", referencedColumnName="id_produit")
+     * })
+     */
+    private $idProduit;
 
     public function getIdConseil(): ?int
     {
@@ -105,18 +123,6 @@ class Conseil
         return $this;
     }
 
-    public function getIdProduit(): ?Produit
-    {
-        return $this->idProduit;
-    }
-
-    public function setIdProduit(?Produit $idProduit): static
-    {
-        $this->idProduit = $idProduit;
-
-        return $this;
-    }
-
     public function getIdTypec(): ?Typeconseil
     {
         return $this->idTypec;
@@ -125,6 +131,18 @@ class Conseil
     public function setIdTypec(?Typeconseil $idTypec): static
     {
         $this->idTypec = $idTypec;
+
+        return $this;
+    }
+
+    public function getIdProduit(): ?Produit
+    {
+        return $this->idProduit;
+    }
+
+    public function setIdProduit(?Produit $idProduit): static
+    {
+        $this->idProduit = $idProduit;
 
         return $this;
     }

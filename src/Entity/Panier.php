@@ -43,16 +43,6 @@ class Panier
     private $prixU;
 
     /**
-     * @var \Utilisateur
-     *
-     * @ORM\ManyToOne(targetEntity="Utilisateur")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="id_user", referencedColumnName="id")
-     * })
-     */
-    private $idUser;
-
-    /**
      * @var \Produit
      *
      * @ORM\ManyToOne(targetEntity="Produit")
@@ -61,6 +51,16 @@ class Panier
      * })
      */
     private $idProduit;
+
+    /**
+     * @var \Utilisateur
+     *
+     * @ORM\ManyToOne(targetEntity="Utilisateur")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="id_user", referencedColumnName="id")
+     * })
+     */
+    private $idUser;
 
     public function getIdPanier(): ?int
     {
@@ -103,18 +103,6 @@ class Panier
         return $this;
     }
 
-    public function getIdUser(): ?Utilisateur
-    {
-        return $this->idUser;
-    }
-
-    public function setIdUser(?Utilisateur $idUser): static
-    {
-        $this->idUser = $idUser;
-
-        return $this;
-    }
-
     public function getIdProduit(): ?Produit
     {
         return $this->idProduit;
@@ -123,6 +111,18 @@ class Panier
     public function setIdProduit(?Produit $idProduit): static
     {
         $this->idProduit = $idProduit;
+
+        return $this;
+    }
+
+    public function getIdUser(): ?Utilisateur
+    {
+        return $this->idUser;
+    }
+
+    public function setIdUser(?Utilisateur $idUser): static
+    {
+        $this->idUser = $idUser;
 
         return $this;
     }

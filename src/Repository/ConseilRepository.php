@@ -82,5 +82,7 @@ public function getConseilCountsByType(): array
             ->getResult();
     }
 
+   
+
 
 }

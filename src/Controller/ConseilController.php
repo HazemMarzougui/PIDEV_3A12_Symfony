@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Conseil;
+use App\Controller\ExcelController;
 use App\Entity\Typeconseil;
 use App\Entity\Produit;
 use App\Form\ConseilType;
@@ -15,7 +16,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Doctrine\ORM\EntityManagerInterface;
@@ -37,6 +37,8 @@ class ConseilController extends AbstractController
         return $this->render('base.html.twig');
     }
 
+
+
     #[Route('/conseils',name:'getAll')]
     public function getAll(Request $request,ConseilRepository $repo,PaginatorInterface $paginator){
         $conseil = new Conseil();
@@ -57,6 +59,36 @@ class ConseilController extends AbstractController
             'conseilCountsByType' => $conseilCountsByType,
         ]);
     }
+
+    #[Route('/conseilsFront', name: 'getAllFront')]
+    public function getAllFront(Request $request, ConseilRepository $repo, TypeConseilRepository $repoType, PaginatorInterface $paginator)
+    {
+
+        $categoryId = $request->query->getInt('category', -1);
+    
+        // Fetch artworks based on the selected category filter
+        if ($categoryId !== -1) {
+            $conseils = $repo->findBy(['idTypec' => $categoryId]);
+        } else {
+            // If no category is selected (-1), retrieve all artworks
+            $conseils = $repo->findAll();
+        }
+
+        $conseilsNumber = $repo->conseilsCount();
+        $categories = $repoType->findAll();
+
+        $conseilsPaginated = $paginator->paginate(
+            $conseils,
+            $request->query->getInt('page', 1), // Current page number, default to 1 if not provided
+            3 // Number of elements per page
+        );
+        return $this->render('Front/conseils.html.twig', [
+            'c' => $conseilsPaginated,
+            'number' => $conseilsNumber,
+            'categories' => $categories 
+        ]);
+    }
+
 
 
     #[Route('/sort-by-category-asc', name: 'sort_by_category_asc')]
@@ -84,89 +116,44 @@ class ConseilController extends AbstractController
             'conseilCountsByType' => $conseilCountsByType,
         ]);
     }
-/*
+
+
     #[Route('/export-to-excel', name: 'export_to_excel')]
-    public function exportToExcel(ConseilRepository $repo): Response
+    public function generateExcel(ExcelController $excelController): Response
     {
-        // Fetch the data to export
-        $conseils = $repo->findAll();
-
-        // Create a new Spreadsheet
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-
-        // Set column headers
-        $sheet->setCellValue('A1', 'ID');
-        $sheet->setCellValue('B1', 'Nom Conseil');
-        //$sheet->setCellValue('C1', 'Video');
-        $sheet->setCellValue('D1', 'Description');
-        $sheet->setCellValue('E1', 'Date');
-        $sheet->setCellValue('F1', 'Categorie');
-        $sheet->setCellValue('G1', 'Produit');
-
-        // Populate data rows
-        $row = 2;
-        foreach ($conseils as $conseil) {
-            $sheet->setCellValue('A' . $row, $conseil->getIdConseil());
-            $sheet->setCellValue('B' . $row, $conseil->getNomConseil());
-           // $sheet->setCellValue('C' . $row, $conseil->getVideo());
-            $sheet->setCellValue('D' . $row, $conseil->getDescription());
-            $sheet->setCellValue('E' . $row, $conseil->getDatecreation()->format('Y-m-d H:i:s'));
-            $sheet->setCellValue('F' . $row, $conseil->getIdTypec()->getNomtypec());
-            $sheet->setCellValue('G' . $row, $conseil->getIdProduit()->getNomProduit());
-            $row++;
+        $filename = $excelController->generateConseilsExcel();
+    
+        // Generate the full path to the Excel file
+        $filePath = $this->getParameter('kernel.project_dir') . '/public/excel/' . $filename;
+    
+        if (!file_exists($filePath)) {
+            throw $this->createNotFoundException('The file does not exist.');
         }
-
-        // Create a new Excel file
-        $writer = new Xlsx($spreadsheet);
-
-        // Set headers for download
-        $response = new Response();
-        $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        $response->headers->set('Content-Disposition', 'attachment;filename="conseils.xlsx"');
-        $response->headers->set('Cache-Control', 'max-age=0');
-
-        // Write the Excel file content to the response
-        $writer->save('php://output');
-        $response->send();
-
-        return $response;
+        return $this->file($filePath);
     }
 
-    #[Route('/search', name: 'conseil_search', methods: ['GET'])]
-    public function searchAction(Request $request, ConseilRepository $repo)
-    {
-        $conseil = new Conseil();
-        $query = $request->query->get('query');
-        $conseilsnumber = $repo->conseilsCount();
-        $conseilCountsByType = $repo->getConseilCountsByType();
-        $conseils = $repo->findByNomConseilLike($query);
-        $formConseil = $this->createForm(ConseilType::class, $conseil);
-        $formConseil->handleRequest($request);    
-        return $this->render('Back/conseil/AfficherConseils.html.twig', [
-            'c'=>$conseils,
-            'fc' => $formConseil->createView(),
-            'number' => $conseilsnumber,
-            'conseilCountsByType' => $conseilCountsByType,
-        ]);
-    }*/
-
-    #[Route('/conseilsFront',name:'getAllFront')]
-    public function getAllFront(Request $request,ConseilRepository $repo){
-        $conseil = new Conseil();
-        $conseils = $repo->findAll();
-        $conseilsnumber = $repo->conseilsCount(); 
-        return $this->render('Front/conseils.html.twig',[
-            'c'=>$conseils,
-            'number' => $conseilsnumber
-        ]);
-    }
 
     #[Route('/conseilsFront/{idc}',name:'getOne')]
-    public function getOne(Request $request,ConseilRepository $repo,$idc){
+    public function getOne(Request $request,ConseilRepository $repo,TypeConseilRepository $repoType,$idc){
         $conseil = $repo->find($idc);
+        $categoryId = $request->query->getInt('category', -1);
+    
+        // Fetch artworks based on the selected category filter
+        if ($categoryId !== -1) {
+            $conseils = $repo->findBy(['idTypec' => $categoryId]);
+        } else {
+            // If no category is selected (-1), retrieve all artworks
+            $conseils = $repo->findAll();
+        }
+
+        $conseilsNumber = $repo->conseilsCount();
+        $categories = $repoType->findAll();
+
+        $conseilsNumber = $repo->conseilsCount();
         return $this->render('Front/conseilsDetails.html.twig',[
             'c'=>$conseil,
+            'number' => $conseilsNumber,
+            'categories' => $categories 
         ]);
     }
 
