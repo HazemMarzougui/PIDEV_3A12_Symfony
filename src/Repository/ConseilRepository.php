@@ -46,27 +46,41 @@ class ConseilRepository extends ServiceEntityRepository
 //        ;
 //    }
 
- /**
-     * Finds the conseil by the given idd.
-     *
-     * @param int $idd The ID of the selected conseil
-     * @return Conseil|null The conseil entity if found, null otherwise
-     */
-    public function findBySelectedConseilId(int $idd): ?Conseil
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.id = :idd')
-            ->setParameter('selected_conseil_id', $idd)
-            ->getQuery()
-            ->getOneOrNullResult();
-    }
-
-    public function conseilsCount(): int
+public function conseilsCount(): int
 {
     return $this->createQueryBuilder('c')
         ->select('COUNT(c.idConseil)')
         ->getQuery()
         ->getSingleScalarResult();
 }
+
+public function getConseilCountsByType(): array
+{
+    return $this->createQueryBuilder('c')
+        ->select('tc.nomtypec as typeConseil', 'COUNT(c.idConseil) as count')
+        ->leftJoin('c.idTypec', 'tc')
+        ->groupBy('tc.nomtypec')
+        ->getQuery()
+        ->getResult();
+}
+
+    public function findByNomConseil(string $query): array
+    {
+        return $this->createQueryBuilder('c')
+            ->where('c.nomConseil LIKE :query')
+            ->setParameter('query', '%'.$query.'%')
+            ->getQuery()
+            ->getResult();
+    }
+
+
+    public function findAllSortedByCategoryAsc(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->orderBy('c.idTypec', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
 
 }

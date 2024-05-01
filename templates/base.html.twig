@@ -162,6 +162,7 @@
             <div class="collapse" id="conseils">
               <ul class="nav flex-column sub-menu">
                 <li class="nav-item"> <a class="nav-link" href="{{ path('getAll')}}">Consulter Conseils</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{ path('getAllType')}}">Consulter Type Conseils</a></li>
               </ul>
             </div>
           </li>
@@ -194,6 +195,7 @@
       </nav>
       <!-- partial -->
       <div class="container-fluid page-body-wrapper">
+
         <!-- partial:partials/_navbar.html -->
         <nav class="navbar p-0 fixed-top d-flex flex-row">
           <div class="navbar-brand-wrapper d-flex d-lg-none align-items-center justify-content-center">
@@ -204,11 +206,9 @@
               <span class="mdi mdi-menu"></span>
             </button>
             <ul class="navbar-nav w-100">
-              <li class="nav-item w-100">
-                <form class="nav-link mt-2 mt-md-0 d-none d-lg-flex search">
-                  <input type="text" class="form-control" placeholder="Search products">
-                </form>
-              </li>
+              {% block search %}
+
+              {% endblock %}
             </ul>
             <ul class="navbar-nav navbar-nav-right">
               <li class="nav-item dropdown d-none d-lg-block">

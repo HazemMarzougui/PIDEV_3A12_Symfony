@@ -1,65 +1,156 @@
 {% extends 'baseFront.html.twig' %}
 
 {% block body %}
+
+
+
+
            <style>
             .testimonial-item {
-                padding: 100px; /* Adjust the padding to increase the size */
-                margin-bottom: 100px; /* Add margin to separate each list item */
+                padding: 80px; /* Adjust the padding to increase the size */
+                margin-bottom: 20px; /* Add margin to separate each list item */
                 box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Adjust the shadow color and intensity as needed */
                 border-radius: 10px;
             }
         </style>
-            <div class="container py-5">
-                <div class="testimonial-header text-center">
-                    <h4 class="text-primary">Nos</h4>
-                    <h1 class="display-5 mb-5 text-dark">Conseils <span><h3>({{ number }})</h3></span></h1>
-                </div>
-                <div class="testimonial-list-container">
+  <div class="container py-5">
+    <div class="testimonial-header text-center">
+        <h4 class="text-primary">Nos</h4>
+        <h1 class="display-5 mb-5 text-dark">Conseils <span>({{ number }})</span></h1>
+    </div>
+
+    <div class="row">
+        <!-- Left column for categories -->
+                    <div class="col-lg-4 col-xl-3">
+                        <div class="row g-4 fruite">
+                            <div class="col-lg-12">
+                                <div class="input-group w-100 mx-auto d-flex mb-4">
+                                    <input type="search" class="form-control p-3" placeholder="keywords" aria-describedby="search-icon-1">
+                                    <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
+                                </div>
+                                <div class="mb-4">
+                                    <h4>Categories</h4>
+                                    <ul class="list-unstyled fruite-categorie">
+                                        <li>
+                                            <div class="d-flex justify-content-between fruite-name">
+                                                <a href="#"><i class="fas fa-apple-alt me-2"></i>Gagner du Poids</a>
+                                                <span>(3)</span>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="d-flex justify-content-between fruite-name">
+                                                <a href="#"><i class="fas fa-apple-alt me-2"></i>Perdre du Poids</a>
+                                                <span>(5)</span>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="d-flex justify-content-between fruite-name">
+                                                <a href="#"><i class="fas fa-apple-alt me-2"></i>Stabiliser du Poids</a>
+                                                <span>(2)</span>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <h4 class="mb-4">Featured products</h4>
+
+                                
+                                <div class="d-flex align-items-center justify-content-start">
+                                    <div class="rounded" style="width: 100px; height: 100px;">
+                                        <img src="{{ asset('Front/assets/img/featur-1.jpg')}}" class="img-fluid rounded" alt="Image">
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-2">Big Banana</h6>
+                                        <div class="d-flex mb-2">
+                                            <i class="fa fa-star text-secondary"></i>
+                                            <i class="fa fa-star text-secondary"></i>
+                                            <i class="fa fa-star text-secondary"></i>
+                                            <i class="fa fa-star text-secondary"></i>
+                                            <i class="fa fa-star"></i>
+                                        </div>         
+                                        <div class="d-flex mb-2">
+                                            <h5 class="fw-bold me-2">2.99 $</h5>
+                                            <h5 class="text-danger text-decoration-line-through">4.11 $</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="position-relative">
+                                    <img src="{{ asset('Front/assets/img/banner-fruits.jpg')}}" class="img-fluid w-100 rounded" alt="">
+                                    <div class="position-absolute" style="top: 50%; right: 10px; transform: translateY(-50%);">
+                                        <h3 class="text-secondary fw-bold">Fresh <br> Fruits <br> Banner</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+        <!-- Right column for testimonial list -->
+        <div class="col-lg-9">
+            <!-- Adjust the column width (col-lg-9) for the main content -->
+            <div class="testimonial-list-container">
                 <ul class="testimonial-list">
-                {% for element in c %}
-<li>
-    <div class="testimonial-item img-border-radius bg-light rounded p-5">
-        <div class="position-relative">
-            <i class="fa fa-quote-right fa-2x text-secondary position-absolute" style="bottom: 30px; right: 0;"></i>
-            <div class="mb-4 pb-4 border-bottom border-secondary">
-                <p class="mb-0">{{ element.description }}</p>
-            </div>
-            <div class="d-flex align-items-center flex-nowrap">
-                <div class="bg-success rounded">
-                    <video width="400" height="280" poster="{{ asset('Dash_Admin/assets/images/logoo.png')}}" controls>
-                        <source src="/uploads/conseil/{{ element.video }}" type="video/mp4">
-                    </video>
-                </div>
-                <div class="ms-4 d-block">
-                    <h2 class="text-dark">{{ element.nomConseil }}</h2>
-                    <h5 class="m-0 pb-3">Type : {{ element.idTypec.nomtypec }}</h5>
-                    <p class="m-0 pb-3">Created at: {{ element.datecreation|date('Y-m-d') }}</p>
-                    <div class="d-flex pe-2">
-                        <i class="fas fa-star text-primary"></i>
-                        <i class="fas fa-star text-primary"></i>
-                        <i class="fas fa-star text-primary"></i>
-                        <i class="fas fa-star text-primary"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <br>
-                    <a href="" class="btn btn-primary">Consulter</a>
-                    <br>
-                    <div class="button-container position-absolute bottom-0 end-0 mb-3 me-5">
-                        <a href="https://www.facebook.com/" class="btn btn-link" target="_blank"><i class="fab fa-facebook-square fa-lg"></i></a>
-                        <a href="https://www.instagram.com/" class="btn btn-link" target="_blank"><i class="fab fa-instagram fa-lg"></i></a>
-                        <a href="https://twitter.com/" class="btn btn-link" target="_blank"><i class="fab fa-twitter fa-lg"></i></a>
-                    </div>
-                </div>
+                    <!-- Loop through your elements -->
+                    {% for element in c %}
+                    <li>
+                        <div class="testimonial-item img-border-radius bg-light rounded p-5">
+                            <div class="position-relative">
+                                <i class="fa fa-quote-right fa-2x text-secondary position-absolute" style="bottom: 30px; right: 0;"></i>
+                                <div class="mb-4 pb-4 border-bottom border-secondary">
+                                    <p class="mb-0">{{ element.description }}</p>
+                                </div>
+                                <div class="d-flex align-items-center flex-nowrap">
+                                    <div class="bg-success rounded">
+                                        <video width="400" height="280" poster="{{ asset('Dash_Admin/assets/images/logoo.png')}}" controls>
+                                            <source src="/uploads/conseil/{{ element.video }}" type="video/mp4">
+                                        </video>
+                                    </div>
+                                    <div class="ms-4 d-block">
+                                        <h2 class="text-dark">{{ element.nomConseil }}</h2>
+                                        <h5 class="m-0 pb-3">Type: {{ element.idTypec.nomtypec }}</h5>
+                                        <p class="m-0 pb-3">Created at: {{ element.datecreation|date('Y-m-d') }}</p>
+                                        <div class="d-flex pe-2">
+                                            <i class="fas fa-star text-primary"></i>
+                                            <i class="fas fa-star text-primary"></i>
+                                            <i class="fas fa-star text-primary"></i>
+                                            <i class="fas fa-star text-primary"></i>
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <br>
+                                        <a href="{{ path('getOne', {'idc': element.idConseil}) }}" class="btn btn-primary">Consulter</a>
+                                        <br>
+                                        <div class="button-container position-absolute bottom-0 end-0 mb-3 me-5">
+                                            <a href="https://www.facebook.com/" class="btn btn-link" target="_blank"><i class="fab fa-facebook-square fa-lg"></i></a>
+                                            <a href="https://www.instagram.com/" class="btn btn-link" target="_blank"><i class="fab fa-instagram fa-lg"></i></a>
+                                            <a href="https://twitter.com/" class="btn btn-link" target="_blank"><i class="fab fa-twitter fa-lg"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
             </div>
         </div>
     </div>
-</li>
 
-                    <br>
-                    <br>
-                {% endfor %}
-                </ul>
-                </div>
-            </div>
+    <!-- Pagination -->
+    <div class="col-12">
+        <div class="pagination d-flex justify-content-center mt-5">
+            <a href="#" class="rounded">&laquo;</a>
+            <a href="#" class="active rounded">1</a>
+            <a href="#" class="rounded">2</a>
+            <a href="#" class="rounded">3</a>
+            <a href="#" class="rounded">4</a>
+            <a href="#" class="rounded">5</a>
+            <a href="#" class="rounded">6</a>
+            <a href="#" class="rounded">&raquo;</a>
         </div>
+    </div>
+</div>
+
+        
         {% endblock %}

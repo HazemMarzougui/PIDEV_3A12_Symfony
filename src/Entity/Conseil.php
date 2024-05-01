@@ -20,42 +20,37 @@ class Conseil
      */
     private ?int $idConseil;
 
-        /**
+      /**
      * @ORM\Column(length=255)
      */
     private ?string $nomConseil;
 
-        /**
-     * @ORM\Column(length=255, nullable=true)
+      /**
+     * @ORM\Column(length=255)
      */
-    private ?string $video = null; // Initialize video property to null
+    private ?string $video;
 
-        /**
+      /**
      * @ORM\Column(length=255)
      */
     private ?string $description;
 
-/**
+    /**
  * @ORM\Column(type="datetime", nullable=false, options={"default": "CURRENT_TIMESTAMP"})
  */
-private ?\DateTimeInterface $datecreation;
+    private ?\DateTimeInterface $datecreation;
 
-
-
-
-
-/**
- * @ORM\ManyToOne(targetEntity=Typeconseil::class)
- * @ORM\JoinColumn(name="id_typeC", referencedColumnName="idTypeC")
- */
-private ?Typeconseil $idTypec;
-
-/**
+    /**
  * @ORM\ManyToOne(targetEntity=Produit::class)
  * @ORM\JoinColumn(name="id_produit", referencedColumnName="id_produit")
  */
-private ?Produit $idProduit;
+    private ?Produit $idProduit;
 
+    /**
+ * @ORM\ManyToOne(targetEntity=Typeconseil::class)
+ * @ORM\JoinColumn(name="id_typeC", referencedColumnName="idTypeC")
+ */
+    private ?Typeconseil $idTypec;
 
     public function getIdConseil(): ?int
     {
@@ -110,18 +105,6 @@ private ?Produit $idProduit;
         return $this;
     }
 
-    public function getIdTypec(): ?Typeconseil
-    {
-        return $this->idTypec;
-    }
-
-    public function setIdTypec(?Typeconseil $idTypec): static
-    {
-        $this->idTypec = $idTypec;
-
-        return $this;
-    }
-
     public function getIdProduit(): ?Produit
     {
         return $this->idProduit;
@@ -130,6 +113,18 @@ private ?Produit $idProduit;
     public function setIdProduit(?Produit $idProduit): static
     {
         $this->idProduit = $idProduit;
+
+        return $this;
+    }
+
+    public function getIdTypec(): ?Typeconseil
+    {
+        return $this->idTypec;
+    }
+
+    public function setIdTypec(?Typeconseil $idTypec): static
+    {
+        $this->idTypec = $idTypec;
 
         return $this;
     }

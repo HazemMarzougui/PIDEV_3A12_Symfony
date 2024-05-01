@@ -22,16 +22,6 @@ class FavoriteConseil
     private $id;
 
     /**
-     * @var \Utilisateur
-     *
-     * @ORM\ManyToOne(targetEntity="Utilisateur")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="id_user", referencedColumnName="id")
-     * })
-     */
-    private $idUser;
-
-    /**
      * @var \Conseil
      *
      * @ORM\ManyToOne(targetEntity="Conseil")
@@ -41,21 +31,19 @@ class FavoriteConseil
      */
     private $idConseil;
 
+    /**
+     * @var \Utilisateur
+     *
+     * @ORM\ManyToOne(targetEntity="Utilisateur")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="id_user", referencedColumnName="id")
+     * })
+     */
+    private $idUser;
+
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getIdUser(): ?Utilisateur
-    {
-        return $this->idUser;
-    }
-
-    public function setIdUser(?Utilisateur $idUser): static
-    {
-        $this->idUser = $idUser;
-
-        return $this;
     }
 
     public function getIdConseil(): ?Conseil
@@ -66,6 +54,18 @@ class FavoriteConseil
     public function setIdConseil(?Conseil $idConseil): static
     {
         $this->idConseil = $idConseil;
+
+        return $this;
+    }
+
+    public function getIdUser(): ?Utilisateur
+    {
+        return $this->idUser;
+    }
+
+    public function setIdUser(?Utilisateur $idUser): static
+    {
+        $this->idUser = $idUser;
 
         return $this;
     }

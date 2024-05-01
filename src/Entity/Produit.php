@@ -11,11 +11,13 @@ use Doctrine\ORM\Mapping as ORM;
 class Produit
 {
     /**
+     * @var int
+     *
+     * @ORM\Column(name="id_produit", type="integer", nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private ?int $idProduit;
+    private $idProduit;
 
     /**
      * @var string

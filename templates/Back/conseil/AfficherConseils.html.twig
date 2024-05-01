@@ -1,10 +1,24 @@
 {% extends 'base.html.twig' %}
+{% block search %}
+    <li class="nav-item w-100">
+        <form id="searchForm" class="nav-link mt-2 mt-md-0 d-none d-lg-flex">
+            <input type="text" id="searchInput" class="form-control" placeholder="Search Conseils">
+        </form>
+    </li>
+{% endblock %}
 
 {% block body %}
 
   <div class="page-header">
       <h3 class="page-title">Gestion des Conseils</h3>
-<a class="nav-link btn btn-success create-new-button" id="addConseil_btn" style="margin-left: -750px;" aria-expanded="false" href="#">+ Créer Conseil</a>
+<a class="nav-link btn btn-success create-new-button" id="addConseil_btn" style="margin-left: -550px;" aria-expanded="false" href="#">+ Créer Conseil</a>
+<a class="nav-link btn btn-primary "  style="margin-left: -530px;" aria-expanded="false" href="{{ path('getAllFront')}}">Front Office</a>
+<a class="nav-link btn btn-primary" style="margin-left: -530px;" href="{{ path('sort_by_category_asc') }}">
+    Sort By Category ASC
+</a>
+<!-- templates/Back/conseil/AfficherConseils.html.twig -->
+<a href="{{ path('export_to_excel') }}" class="btn btn-success">Export to Excel</a>
+
 
 
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -17,10 +31,47 @@
         </button>
       </div>
       <div class="modal-body">
-          <form id="conseilForm" action="#" method="post" enctype="multipart/form-data">
-          {{ form_widget(fc) }} 
-          <input type="hidden" name="_token" value="{{ csrf_token('add_conseil') }}"> 
-        </form>
+         <form id="conseilForm" action="#" method="post" enctype="multipart/form-data">
+    {{ form_start(fc) }}
+    <div class="form-group{% if fc.nomConseil.vars.errors|length > 0 %} has-error{% endif %}">
+        {{ form_label(fc.nomConseil) }}
+        {{ form_widget(fc.nomConseil, {'attr': {'class': 'form-control'}}) }}
+        {% for error in fc.nomConseil.vars.errors %}
+            <span class="text-danger">{{ error.message }}</span>
+        {% endfor %}
+    </div>
+
+    <div class="form-group{% if fc.video.vars.errors|length > 0 %} has-error{% endif %}">
+        {{ form_label(fc.video) }}
+        {{ form_widget(fc.video, {'attr': {'class': 'form-control-file'}}) }}
+        {% for error in fc.video.vars.errors %}
+            <span class="text-danger">{{ error.message }}</span>
+        {% endfor %}
+    </div>
+
+    <div class="form-group{% if fc.description.vars.errors|length > 0 %} has-error{% endif %}">
+        {{ form_label(fc.description) }}
+        {{ form_widget(fc.description, {'attr': {'class': 'form-control'}}) }}
+        {% for error in fc.description.vars.errors %}
+            <span class="text-danger">{{ error.message }}</span>
+        {% endfor %}
+    </div>
+
+    <div class="form-group">
+        {{ form_label(fc.idTypec) }}
+        {{ form_widget(fc.idTypec, {'attr': {'class': 'form-control', 'style': 'width: 450px;'}}) }}
+    </div>
+
+    <div class="form-group">
+        {{ form_label(fc.idProduit) }}
+        {{ form_widget(fc.idProduit, {'attr': {'class': 'form-control', 'style': 'width: 450px;'}}) }}
+    </div>
+
+    {{ form_end(fc) }}
+    <input type="hidden" name="_token" value="{{ csrf_token('add_conseil') }}">
+</form>
+
+
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -38,62 +89,138 @@
               </nav>
             </div>
             <div class="row">
-              <div class="col-lg-12 grid-margin stretch-card">
+
+
+              <div class="col-sm-4 grid-margin">
                 <div class="card">
                   <div class="card-body">
-                    <h4 class="card-title">Liste des Conseils</h4>
-                    <div class="table-responsive" style="height: 400px; overflow-y: auto; overflow-x: hidden;">
-                <table class="table table-hover">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Nom Conseil</th>
-            <th>Video</th>
-            <th>Description</th>
-            <th>Date</th>
-            <th>Categorie</th>
-            <th>Produit</th>
-            <th>Modifier</th>
-            <th>Supprimer</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for element in c %}
-        <tr>
-            <td class="text-success">{{ element.idConseil }}</td>
-            <td>{{ element.nomConseil }}</td>
-            <td>
-                <video width="200" height="150" controls>
-                    <source src="/uploads/conseil/{{ element.video }}" type="video/mp4">
-                </video>
-            </td>
-            <td>{{ element.description }}</td>
-            <td>{{ element.datecreation|date('Y-m-d H:i:s') }}</td>
-            <td class="text-warning">{{ element.idTypec.nomtypec }}</td>
-            <td class="text-warning">{{ element.idProduit.nomProduit }}</td>
-            <td>
-              <button id="update_btn" class="btn btn-outline-warning btn-icon-text edit-btn" data-id="{{ element.idConseil }}">Modifier <i class="mdi mdi-file-check btn-icon-append"></i></button>
-            </td>
-            <td>
-                <a href="{{ path('conseil_delete', {'id': element.idConseil}) }}" class="btn btn-outline-danger btn-icon-text">Supprimer <i class="mdi mdi-file-remove btn-icon-append"></i></a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+                    <h5>Conseils Number</h5>
+                    <div class="row">
+                      <div class="col-8 col-sm-12 col-xl-8 my-auto">
+                        <div class="d-flex d-sm-block d-md-flex align-items-center">
+                          <h2 class="mb-0">{{ number }}</h2>
+                        </div>
+                        <h6 class="text-muted font-weight-normal">11.38% Since last month</h6>
+                      </div>
+                      <div class="col-4 col-sm-12 col-xl-4 text-center text-xl-right">
+                        <i class="icon-lg mdi mdi-clipboard-check text-success ml-auto"></i>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
 
-            </div>
+
+              <div class="col-sm-4 grid-margin">
+                <div class="card">
+                  <div class="card-body">
+                    <h5>Revenue</h5>
+                    <div class="row">
+                      <div class="col-8 col-sm-12 col-xl-8 my-auto">
+                        <div class="d-flex d-sm-block d-md-flex align-items-center">
+                          <h2 class="mb-0">$32123</h2>
+                          <p class="text-success ml-2 mb-0 font-weight-medium">+3.5%</p>
+                        </div>
+                        <h6 class="text-muted font-weight-normal">11.38% Since last month</h6>
+                      </div>
+                      <div class="col-4 col-sm-12 col-xl-4 text-center text-xl-right">
+                        <i class="icon-lg mdi mdi-codepen text-primary ml-auto"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+              <div class="col-sm-4 grid-margin">
+                <div class="card">
+                  <div class="card-body">
+                    <h5>Reviews</h5>
+                    <div class="row">
+                      <div class="col-8 col-sm-12 col-xl-8 my-auto">
+                        <div class="d-flex d-sm-block d-md-flex align-items-center">
+                          <h2 class="mb-0">$32123</h2>
+                          <p class="text-success ml-2 mb-0 font-weight-medium">+3.5%</p>
+                        </div>
+                        <h6 class="text-muted font-weight-normal">11.38% Since last month</h6>
+                      </div>
+                      <div class="col-4 col-sm-12 col-xl-4 text-center text-xl-right">
+                        <i class="icon-lg mdi mdi-message-reply-text text-warning ml-auto"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-lg-12 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">Liste des Conseils</h4>
+                    <div class="table-responsive">
+                  <table class="table table-hover">
+                          <thead>
+                              <tr>
+                                  <th>ID</th>
+                                  <th>Nom Conseil</th>
+                                  <th>Video</th>
+                                  <th>Description</th>
+                                  <th>Date</th>
+                                  <th>Categorie</th>
+                                  <th>Produit</th>
+                                  <th>Modifier</th>
+                                  <th>Supprimer</th>
+                              </tr>
+                          </thead>
+                           <tbody id="conseilTableBody">
+                              {% for element in c %}
+                              <tr>
+                                  <td class="text-success">{{ element.idConseil }}</td>
+                                  <td>{{ element.nomConseil }}</td>
+                                  <td>
+                                      <video width="200" height="150" controls>
+                                          <source src="/uploads/conseil/{{ element.video }}" type="video/mp4">
+                                      </video>
+                                  </td>
+                                  <td>{{ element.description }}</td>
+                                  <td>{{ element.datecreation|date('Y-m-d H:i:s') }}</td>
+                                  <td class="text-warning">{{ element.idTypec.nomtypec }}</td>
+                                  <td class="text-warning">{{ element.idProduit.nomProduit }}</td>
+                                  <td>
+                                      <a id="btnU" href="{{ path('conseil_update', {'idc': element.idConseil}) }}" class="btn btn-outline-warning btn-icon-text">Modifier <i class="mdi mdi-file-check btn-icon-append"></i></a>
+                                  </td>
+                                  <td>
+                                      <a href="{{ path('conseil_delete', {'id': element.idConseil}) }}" class="btn btn-outline-danger btn-icon-text">Supprimer <i class="mdi mdi-file-remove btn-icon-append"></i></a>
+                                  </td>
+                              </tr>
+                              {% endfor %}
+                          </tbody>
+                      </table>
+                      <div class="pagination">
+                        {{ knp_pagination_render(c) }}
+                    </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+
+    <div class="card">
+    <div class="card-body">
+      <h4 style="margin-left:110px;">Conseils By Categorie</h4>
+      <br><br>
+        <canvas id="conseilPieChart" width="400" height="400"></canvas>
+    </div>
+    </div>  
+
+
+     </div>
       </div>
-
-      <!-- Modal -->
-
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 
 
+    
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <!-- Bootstrap CSS -->
@@ -104,6 +231,7 @@
 
 {% block JS %}
 <script>
+
   document.addEventListener("DOMContentLoaded", function() {
     // Handling 'Créer Conseil' button click event
     document.getElementById("addConseil_btn").addEventListener("click", function() {
@@ -112,64 +240,33 @@
         test = document.getElementById("conseilForm").action = "{{ path('conseil_add') }}";
         console.log("Form Action:", test);
     });
-
-    // Handling 'Modifier' button click event
-    var updateButtons = document.querySelectorAll("#update_btn");
-updateButtons.forEach(function(button) {
-    button.addEventListener("click", function() {
-        $('#myModal').modal('show');
-        // Set the form action to 'conseil_update' when 'Modifier' button is clicked
-        var conseilId = this.getAttribute('data-id');
-        var formAction = "/update/" + conseilId; // Construct the URL manually
-        document.getElementById("conseilForm").action = formAction;
-        console.log("Form Action:", formAction);
-        console.log("Selected ID :", conseilId);
-    });
-});
-
 });
 
 
-/*
-$(document).on("click", ".edit-btn", function () {
-    var conseilId = $(this).data('id'); 
-    console.log("Selected Conseil ID:", conseilId); 
-    
-    $.ajax({
-        url: '{{ path("conseil_update", {"id": "__id__"}) }}'.replace('__id__', conseilId),
-        type: 'GET',
-success: function(response) {
+        document.addEventListener('DOMContentLoaded', function() {
+            var ctx = document.getElementById('conseilPieChart').getContext('2d');
+            var conseilCountsByType = {{ conseilCountsByType | json_encode | raw }};
 
-    console.log("AJAX Response:", response);
+            var labels = conseilCountsByType.map(item => item.typeConseil);
+            var data = conseilCountsByType.map(item => item.count);
 
-    var nomConseil = response.nomConseil;
-    var video = response.video;
-    var description = response.description;
-    var idTypec = response.idTypec;
-    var idProduit = response.idProduit;
-
-    // Log the extracted data
-    console.log("Nom Conseil:", nomConseil);
-    console.log("Video:", video);
-    console.log("Description:", description);
-    console.log("ID Typec:", idTypec);
-    console.log("ID Produit:", idProduit);
-
-    // Populate form fields with extracted data
-    $("#conseilForm").find('input[name="conseil[nomConseil]"]').val(nomConseil);
-    $("#conseilForm").find('file[name="conseil[video]"]').val(video);
-    $("#conseilForm").find('input[name="conseil[description]"]').val(description);
-    $("#conseilForm").find('select[name="conseil[idTypec]"]').val(idTypec);
-    $("#conseilForm").find('select[name="conseil[idProduit]"]').val(idProduit);
-    
-    $("#myModal").modal("show");
-},
-
-        error: function(xhr, status, error) {
-            console.error(xhr.responseText);
-        }
-    });
-});*/
+            var pieChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Conseils by Type',
+                        data: data,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.6)',
+                            'rgba(54, 162, 235, 0.6)',
+                            'rgba(255, 206, 86, 0.6)',
+                            // Add more colors as needed
+                        ],
+                    }],
+                },
+            });
+        });
 
 
 
@@ -200,7 +297,37 @@ success: function(response) {
     top: 0px; /* Adjust as needed */
     right: 0px; /* Adjust as needed */
     z-index: 1050; /* Ensure modal is on top of other elements */
+
+
+    /* styles.css */
+.error-field {
+    border-color: red;
+    /* Autres styles rouges */
 }
+}
+  .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .pagination a {
+        color: #333;
+        padding: 8px 16px;
+        text-decoration: none;
+        border: 1px solid #ddd;
+        margin: 0 4px;
+        border-radius: 4px;
+    }
+
+    .pagination a.active {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    .pagination a:hover:not(.active) {
+        background-color: #ddd;
+    }
 
     /* Firefox */
     scrollbar-color: #888 #191c24;

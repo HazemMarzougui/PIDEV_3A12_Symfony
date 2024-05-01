@@ -2,8 +2,6 @@
 
 namespace App\Entity;
 
-
-
 use App\Repository\TypeConseilRepository;
 use Doctrine\ORM\Mapping as ORM;
 
