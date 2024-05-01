@@ -2,57 +2,37 @@
 {% block title %}Commande index{% endblock %}
 
 {% block body %}
-    
- <!-- Single Page Header start -->
-        <div class="container-fluid page-header py-5">
-            <h1 class="text-center text-white display-6">Checkout</h1>
-            <ol class="breadcrumb justify-content-center mb-0">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item"><a href="#">Pages</a></li>
-                <li class="breadcrumb-item active text-white">Checkout</li>
-            </ol>
-        </div>
-        <!-- Single Page Header End -->
+    <!-- Single Page Header start -->
+    <div class="container-fluid page-header py-5">
+        <h1 class="text-center text-white display-6">Checkout</h1>
+        <ol class="breadcrumb justify-content-center mb-0">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item"><a href="#">Pages</a></li>
+            <li class="breadcrumb-item active text-white">Checkout</li>
+        </ol>
+    </div>
+    <!-- Single Page Header End -->
 
-
-<div class="container">
-    <div class="row">
-        <div class="col">
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th scope="col"><h3>Prénom</h3></th>
-                        <th scope="col"><h3>Nom</h3></th>
-                        <th scope="col"><h3>Téléphone</h3></th>
-                        <th scope="col"><h3>Adresse</h3></th>
-                        <th scope="col"><h3>Email</h3></th>
-                        <th scope="col"><h3>Prix</h3></th>
-                        <th scope="col"><h3>Actions</h3></th>
-                    </tr>
-                </thead>
-                <tbody>
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <ul class="list-group">
                     {% for commande in commandes %}
-                        <tr>
-                            <td>{{ commande.prenom }}</td>
-                            <td>{{ commande.nom }}</td>
-                            <td>{{ commande.telephone }}</td>
-                            <td>{{ commande.adresse }}</td>
-                            <td>{{ commande.email }}</td>
-                            <td>{{ commande.prixTotale }}</td>
-                            <td>
-                                <a href="#">Delete</a>
-                                <a href="{{ path('app_design_edit', {'idCommande': commande.idCommande}) }}">edit</a>
-                            </td>
-                        </tr>
+                        <li class="list-group-item">
+                            <h5 class="mb-1">{{ commande.prenom }} {{ commande.nom }}</h5>
+                            <p class="mb-1">Téléphone: {{ commande.telephone }}</p>
+                            <p class="mb-1">Adresse: {{ commande.adresse }}</p>
+                            <p class="mb-1">Email: {{ commande.email }}</p>
+                            <p class="mb-1">Prix: {{ commande.prixTotale }}</p>
+                            <div class="btn-group" role="group" aria-label="Actions">
+                                <a href="{{ path('app_commande_delete', {'id': commande.idCommande}) }}" class="btn btn-danger">Supprimer</a>
+                                <a href="{{ path('app_Commande_update', {'id': commande.idCommande}) }}" class="btn btn-primary">Modifier</a>
+                                
+                            </div>
+                        </li>
                     {% endfor %}
-                </tbody>
-            </table>
+                </ul>
+            </div>
         </div>
     </div>
-</div>
-
-
-
-
-
-{% endblock %}        
+{% endblock %}

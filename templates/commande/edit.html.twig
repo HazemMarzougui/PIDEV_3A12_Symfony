@@ -3,11 +3,69 @@
 {% block title %}Edit Commande{% endblock %}
 
 {% block body %}
-    <h1>Edit Commande</h1>
+     <div class="container-fluid py-5">
+      <div class="container py-5">
+        <h1 class="mb-4">Liste des Commandes</h1>
+        {{ form_start(form, {'attr': {'class': 'contact-us', 'novalidate': 'novalidate'}}) }}
+            <div class="row g-5">
+                <div class="col-md-12 col-lg-6 col-xl-7">
+                    <div class="row">
+                        <div class="col-md-12 col-lg-6">
+                            <div class="form-item w-100">
+                                <label for="prenom" class="form-label my-3">Prénom<sup>*</sup></label>
+                                {{ form_widget(form.prenom, {'attr': {'class': 'form-control', 'placeholder': 'Prénom'}}) }}
+                                {% if form_errors(form.prenom) is not empty %}
+                                    <div class="alert alert-danger">{{ form_errors(form.prenom) }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-12 col-lg-6">
+                            <div class="form-item w-100">
+                                <label class="form-label my-3">Nom<sup>*</sup></label>
+                                {{ form_widget(form.nom, {'attr': {'class': 'form-control', 'placeholder': 'Nom'}}) }}
+                                {% if form_errors(form.nom) is not empty %}
+                                    <div class="alert alert-danger">{{ form_errors(form.nom) }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-item">
+                        <label class="form-label my-3">Adresse<sup>*</sup></label>
+                        {{ form_widget(form.adresse, {'attr': {'class': 'form-control', 'placeholder': 'Adresse'}}) }}
+                        {% if form_errors(form.adresse) is not empty %}
+                            <div class="alert alert-danger">{{ form_errors(form.adresse) }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-item">
+                        <label class="form-label my-3">Téléphone<sup>*</sup></label>
+                        {{ form_widget(form.telephone, {'attr': {'class': 'form-control', 'placeholder': 'Téléphone'}}) }}
+                        {% if form_errors(form.telephone) is not empty %}
+                            <div class="alert alert-danger">{{ form_errors(form.telephone) }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-item">
+                        <label class="form-label my-3">Email<sup>*</sup></label>
+                        {{ form_widget(form.email, {'attr': {'class': 'form-control', 'placeholder': 'Email'}}) }}
+                        {% if form_errors(form.email) is not empty %}
+                            <div class="alert alert-danger">{{ form_errors(form.email) }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-item">
+                        <label class="form-label my-3">Prix Total<sup>*</sup></label>
+                        {{ form_widget(form.prixTotale, {'attr': {'class': 'form-control', 'placeholder': 'Prix Total'}}) }}
+                        {% if form_errors(form.prixTotale) is not empty %}
+                            <div class="alert alert-danger">{{ form_errors(form.prixTotale) }}</div>
+                        {% endif %}
+                      <br>  
+                    </div>
+                    <button type="submit" class="btn border-secondary py-3 px-4 text-uppercase w-100 text-primary">Update</button>
+                </div>
+                
+                            </div>
+                        </div>
+        {{ form_end(form) }}
 
-    {{ include('commande/_form.html.twig', {'button_label': 'Update'}) }}
 
-    <a href="{{ path('app_commande_index') }}">back to list</a>
 
-    {{ include('commande/_delete_form.html.twig') }}
+<!-- Checkout Page End -->      
 {% endblock %}

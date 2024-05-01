@@ -27,9 +27,9 @@
        
         <!-- Customized Bootstrap Stylesheet -->
        
-        <link rel="stylesheet" href="{{asset('./css/bootstrap.min.css')}}" />
+        <link rel="stylesheet" href="{{asset('css/bootstrap.min.css')}}" />
         <!-- Template Stylesheet -->
-       <link rel="stylesheet" href="{{asset('./css/style.css')}}" />
+       <link rel="stylesheet" href="{{asset('css/style.css')}}" />
         {% endblock %}
     </head>
 
@@ -67,7 +67,7 @@
                     </button>
                     <div class="collapse navbar-collapse bg-white" id="navbarCollapse">
                         <div class="navbar-nav mx-auto">
-                            <a href="index.html" class="nav-item nav-link active">Home</a>
+                            <a href="{{path('app_front')}}" class="nav-item nav-link active">Home</a>
                             <a href="shop.html" class="nav-item nav-link">Shop</a>
                             <a href="shop-detail.html" class="nav-item nav-link">Shop Detail</a>
                             <div class="nav-item dropdown">
@@ -263,7 +263,7 @@
                     <div class="col-md-6 col-lg-4 col-xl-3">
                         <div class="rounded position-relative fruite-item border border-secondary">
                             <div class="fruite-img">
-                                <img src="img/fruite-item-5.jpg" class="img-fluid w-100 rounded-top" alt="">
+                                <img src="img/plats-healthy.jpg" class="img-fluid w-100 rounded-top" alt="">
                             </div>
                             <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">Fruits</div>
                             <div class="p-4 border-top-0 rounded-bottom">
@@ -329,9 +329,6 @@
 
 
         
-
-       
-
 
         
 
@@ -404,7 +401,7 @@
                             <p>Email: Example@gmail.com</p>
                             <p>Phone: +0123 4567 8910</p>
                             <p>Payment Accepted</p>
-                            <img src="img/payment.png" class="img-fluid" alt="">
+                            <img src="{{asset('img/payment.png')}}" class="img-fluid" alt="">
                         </div>
                     </div>
                 </div>
@@ -423,13 +420,13 @@
 	{% block JsScript %}  
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="lib/easing/easing.min.js"></script>
-    <script src="lib/waypoints/waypoints.min.js"></script>
-    <script src="lib/lightbox/js/lightbox.min.js"></script>
-    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="{{asset('lib/easing/easing.min.js')}}"></script>
+    <script src="{{asset('lib/waypoints/waypoints.min.js')}}"></script>
+    <script src="{{asset('lib/lightbox/js/lightbox.min.js')}}"></script>
+    <script src="{{asset('lib/owlcarousel/owl.carousel.min.js')}}"></script>
     <!-- Template Javascript -->
     
-	<script src="{{asset('./js/main.js')}}"></script>
+	<script src="{{asset('js/main.js')}}"></script>
 	 
 {% endblock %}
     	

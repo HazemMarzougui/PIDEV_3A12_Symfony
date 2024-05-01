@@ -46,4 +46,15 @@ class CommandeRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+
+
+public function searchByQuery(string $query): array
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.nom LIKE :query OR c.prenom LIKE :query OR c.adresse LIKE :query OR c.telephone LIKE :query OR c.email LIKE :query OR c.prix_totale LIKE :query')
+            ->setParameter('query', '%'.$query.'%')
+            ->getQuery()
+            ->getResult();
+    }
+
 }
