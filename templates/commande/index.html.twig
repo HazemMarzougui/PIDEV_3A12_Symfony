@@ -4,138 +4,139 @@
 
 {% block body %}
     
- <!-- Single Page Header start -->
-        <div class="container-fluid page-header py-5">
-            <h1 class="text-center text-white display-6">Checkout</h1>
-            <ol class="breadcrumb justify-content-center mb-0">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item"><a href="#">Pages</a></li>
-                <li class="breadcrumb-item active text-white">Checkout</li>
-            </ol>
-        </div>
-        <!-- Single Page Header End -->
+<!-- Single Page Header start -->
+<div class="container-fluid page-header py-5">
+    <h1 class="text-center text-white display-6">Checkout</h1>
+    <ol class="breadcrumb justify-content-center mb-0">
+        <li class="breadcrumb-item"><a href="#">Home</a></li>
+        <li class="breadcrumb-item"><a href="#">Pages</a></li>
+        <li class="breadcrumb-item active text-white">Checkout</li>
+    </ol>
+</div>
+<!-- Single Page Header End -->
 
-
-     <div class="container-fluid py-5">
-      <div class="container py-5">
+<div class="container-fluid py-5">
+    <div class="container py-5">
         <h1 class="mb-4">Billing details</h1>
         {{ form_start(form, {'attr': {'class': 'contact-us', 'novalidate': 'novalidate'}}) }}
-            <div class="row g-5">
-                <div class="col-md-12 col-lg-6 col-xl-7">
-                    <div class="row">
-                        <div class="col-md-12 col-lg-6">
-                            <div class="form-item w-100">
-                                <label  class="form-label my-3">Prénom<sup>*</sup></label>
-                                {{ form_widget(form.prenom, {'attr': {'class': 'form-control', 'placeholder': 'Prénom'}}) }}
-                                {% if form_errors(form.prenom) is not empty %}
-                                    <div class="alert alert-danger">{{ form_errors(form.prenom) }}</div>
-                                {% endif %}
-                            </div>
-                        </div>
-                        <div class="col-md-12 col-lg-6">
-                            <div class="form-item w-100">
-                                <label class="form-label my-3">Nom<sup>*</sup></label>
-                                {{ form_widget(form.nom, {'attr': {'class': 'form-control', 'placeholder': 'Nom'}}) }}
-                                {% if form_errors(form.nom) is not empty %}
-                                    <div class="alert alert-danger">{{ form_errors(form.nom) }}</div>
-                                {% endif %}
-                            </div>
+        <div class="row g-5">
+            <div class="col-md-12 col-lg-6">
+                <div class="row">
+                    <div class="col-md-12 col-lg-6">
+                        <div class="form-item w-100">
+                            <label  class="form-label my-3">Prénom<sup>*</sup></label>
+                            {{ form_widget(form.prenom, {'attr': {'class': 'form-control', 'placeholder': 'Prénom'}}) }}
+                            {% if form_errors(form.prenom) is not empty %}
+                                <div class="alert alert-danger">{{ form_errors(form.prenom) }}</div>
+                            {% endif %}
                         </div>
                     </div>
-                    <div class="form-item">
-                        <label class="form-label my-3">Adresse<sup>*</sup></label>
-                        {{ form_widget(form.adresse, {'attr': {'class': 'form-control', 'placeholder': 'Adresse'}}) }}
-                        {% if form_errors(form.adresse) is not empty %}
-                            <div class="alert alert-danger">{{ form_errors(form.adresse) }}</div>
-                        {% endif %}
+                    <div class="col-md-12 col-lg-6">
+                        <div class="form-item w-100">
+                            <label class="form-label my-3">Nom<sup>*</sup></label>
+                            {{ form_widget(form.nom, {'attr': {'class': 'form-control', 'placeholder': 'Nom'}}) }}
+                            {% if form_errors(form.nom) is not empty %}
+                                <div class="alert alert-danger">{{ form_errors(form.nom) }}</div>
+                            {% endif %}
+                        </div>
                     </div>
-                
-                    <div class="form-item">
-    <label class="form-label my-3">Téléphone<sup>*</sup></label>
-    {{ form_widget(form.telephone, {'attr': {'class': 'form-control', 'placeholder': 'Téléphone', 'maxlength': 8}}) }}
-    {% if form_errors(form.telephone) is not empty %}
-        <div class="alert alert-danger">{{ form_errors(form.telephone) }}</div>
-    {% endif %}
-</div>
-                  <div class="form-item">
-    <label class="form-label my-3">Email<sup>*</sup></label>
-    {{ form_widget(form.email, {'attr': {'class': 'form-control', 'placeholder': 'Email', 'type': 'email'}}) }}
-    {% if form_errors(form.email) is not empty %}
-        <div class="alert alert-danger">{{ form_errors(form.email) }}</div>
-    {% endif %}
-</div>
-
-                    <div class="form-item">
-                        <label class="form-label my-3">Prix Total<sup>*</sup></label>
-                        {{ form_widget(form.prixTotale, {'attr': {'class': 'form-control', 'placeholder': 'Prix Total'}}) }}
-                        {% if form_errors(form.prixTotale) is not empty %}
-                            <div class="alert alert-danger">{{ form_errors(form.prixTotale) }}</div>
-                        {% endif %}
-                    <br>    
-                    </div>
-                    <button type="submit" class="btn border-secondary py-3 px-4 text-uppercase w-100 text-primary">Add</button>
                 </div>
-                <div class="col-md-12 col-lg-6 col-xl-5">
-                                <div class="table-responsive">
-                                    <table class="table">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col">Products</th>
-                                                <th scope="col">Name</th>
-                                                <th scope="col">Price</th>
-                                                <th scope="col">Quantity</th>
-                                                <th scope="col">Total</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                           
-                                            {% for product in cartProducts %}
-                                            <tr>
-                                               <td>
-                                                <div class="d-flex align-items-center mt-2">
-                                                  <img src="{{asset('img/plats-healthy.jpg')}}" class="img-fluid rounded-circle" style="width: 90px; height: 90px;" alt="">
-                                                </div>
-                                              </td>
-                                                 <td class="py-5">{{ product.productName }}</td>
-                                                 <td class="py-5">{{ product.productPrice }}</td>
-                                                 <td class="py-5">2</td>
-                    
-                                                 
-                                           </tr>
-                                           {% endfor %}
-                                           
-                                            
-                                            
-                                           
-    
-                                        </tbody>
-                                    </table>
-                                </div>
-                              
-                                <div class="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
-                                    <div class="col-12">
-                                        <div class="form-check text-start my-3">
-                                            <input type="checkbox" class="form-check-input bg-primary border-0" id="Payments-1" name="Payments" value="Payments">
-                                            <label class="form-check-label" for="Payments-1">Check Payments</label>
-                                        </div>
+                <div class="form-item">
+                    <label class="form-label my-3">Adresse<sup>*</sup></label>
+                    {{ form_widget(form.adresse, {'attr': {'class': 'form-control', 'placeholder': 'Adresse'}}) }}
+                    {% if form_errors(form.adresse) is not empty %}
+                        <div class="alert alert-danger">{{ form_errors(form.adresse) }}</div>
+                    {% endif %}
+                </div>
+                <div class="form-item">
+                    <label class="form-label my-3">Téléphone<sup>*</sup></label>
+                    {{ form_widget(form.telephone, {'attr': {'class': 'form-control', 'placeholder': 'Téléphone', 'maxlength': 8}}) }}
+                    {% if form_errors(form.telephone) is not empty %}
+                        <div class="alert alert-danger">{{ form_errors(form.telephone) }}</div>
+                    {% endif %}
+                </div>
+                <div class="form-item">
+                    <label class="form-label my-3">Email<sup>*</sup></label>
+                    {{ form_widget(form.email, {'attr': {'class': 'form-control', 'placeholder': 'Email', 'type': 'email'}}) }}
+                    {% if form_errors(form.email) is not empty %}
+                        <div class="alert alert-danger">{{ form_errors(form.email) }}</div>
+                    {% endif %}
+                </div>
+                <div class="form-item">
+                    <label class="form-label my-3">Prix Total<sup>*</sup></label>
+                    {{ form_widget(form.prixTotale, {'attr': {'class': 'form-control', 'placeholder': 'Prix Total'}}) }}
+                    {% if form_errors(form.prixTotale) is not empty %}
+                        <div class="alert alert-danger">{{ form_errors(form.prixTotale) }}</div>
+                    {% endif %}
+                    <br>
+                </div>
+            </div>
+            <div class="col-md-12 col-lg-6 col-xl-5">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Products</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Quantity</th>
+                                <th scope="col">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in cartProducts %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center mt-2">
+                                        <img src="{{asset('img/plats-healthy.jpg')}}" class="img-fluid rounded-circle" style="width: 90px; height: 90px;" alt="">
                                     </div>
-                                </div>
-                                <div class="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
-                                    <div class="col-12">
-                                        <div class="form-check text-start my-3">
-                                            <input type="checkbox" class="form-check-input bg-primary border-0" id="Delivery-1" name="Delivery" value="Delivery">
-                                            <label class="form-check-label" for="Delivery-1">Cash On Delivery</label>
-                                        </div>
-                                    </div>
-                                </div>
-                           
-                                
-                            </div>
+                                </td>
+                                <td class="py-5">{{ product.productName }}</td>
+                                <td class="py-5">{{ product.productPrice }}</td>
+                                <td class="py-5">2</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
+                    <div class="col-12">
+                        <div class="form-check text-start my-3">
+                            <input type="checkbox" class="form-check-input bg-primary border-0" id="Payments-1" name="Payments" value="Payments">
+                            <label class="form-check-label" for="Payments-1">Check Payments</label>
                         </div>
+                    </div>
+                </div>
+                <div class="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
+                    <div class="col-12">
+                        <div class="form-check text-start my-3">
+                            <input type="checkbox" class="form-check-input bg-primary border-0" id="Delivery-1" name="Delivery" value="Delivery">
+                            <label class="form-check-label" for="Delivery-1">Cash On Delivery</label>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn border-secondary py-3 px-4 text-uppercase w-100 text-primary">Add</button>
+            </div>
+        </div>
         {{ form_end(form) }}
+    </div>
+</div>
 
+<script>
+    document.getElementById("submit-button").addEventListener("click", function() {
+        var paymentChecked = document.getElementById("Payments-1").checked;
+        var deliveryChecked = document.getElementById("Delivery-1").checked;
 
-
-<!-- Checkout Page End -->       
+        if (paymentChecked) {
+            window.location.href = "{{ path('app_payment1') }}";
+        } else if (deliveryChecked) {
+            window.location.href = "{{ path('app_show') }}";
+            alert("Traitement pour Cash On Delivery");
+        } else {
+            // Si rien n'est coché, vous pouvez afficher un message d'erreur ou effectuer d'autres actions
+            alert("Veuillez sélectionner un mode de paiement ou de livraison");
+        }
+    });
+</script>
 
 {% endblock %}

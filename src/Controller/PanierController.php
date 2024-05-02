@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Panier;
+use App\Entity\Commande;
 use App\Form\PanierType;
 use App\Repository\PanierRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -101,6 +102,19 @@ public function updateQuantity(Request $request): JsonResponse
     }
 
     return new JsonResponse(['cartTotal' => $cartTotal]);
+}
+
+
+#[Route('/show', name: 'app_show')]
+public function indexp(): Response
+{
+    
+    $commandes = $this->getDoctrine()->getRepository(Commande::class)->findAll();
+
+    return $this->render('commande/show.html.twig', [
+        'controller_name' => 'FrontController',
+        'commandes' => $commandes,
+    ]);
 }
 
     

@@ -100,10 +100,36 @@
                     <p id="cartTotal" class="mb-0 pe-4">${{ cartTotal }}</p>
                 </div>
                 <button id="proceedCheckoutBtn" class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4" type="button">Proceed Checkout</button>
+                <button id="CommandBtn" class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4" type="button">List Command</button>
             </div>
         </div>
     </div>
 </div>
+<script>
+    // Function to fetch and display the command list
+    function showCommandList() {
+        // Perform AJAX request to fetch command list
+        fetch('{{ path('app_show') }}')
+            .then(response => response.text())
+            .then(data => {
+                // Display command list in a modal or any other container
+                // For example, you can use Bootstrap modal
+                $('#commandListModal .modal-body').html(data);
+                $('#commandListModal').modal('show');
+            })
+            .catch(error => {
+                console.error('Failed to fetch command list:', error);
+                // Handle errors
+            });
+    }
+
+    // Event listener for CommandBtn click
+    const commandBtn = document.getElementById('CommandBtn');
+    commandBtn.addEventListener('click', function() {
+        window.location.href = "{{ path('app_show') }}";
+        showCommandList();
+    });
+</script>
 
 <script>
     var productQuantities = {};

@@ -48,10 +48,22 @@ class CommandeRepository extends ServiceEntityRepository
 //    }
 
 
+public function findProductsByCommandId($commandId)
+{
+    return $this->createQueryBuilder('c')
+        ->select('p')
+        ->join('c.paniers', 'panier')
+        ->join('panier.idProduit', 'p')
+        ->andWhere('c.idcommande = :commandId')
+        ->setParameter('commandId', $commandId)
+        ->getQuery()
+        ->getResult();
+}
+
 public function searchByQuery(string $query): array
     {
         return $this->createQueryBuilder('c')
-            ->andWhere('c.nom LIKE :query OR c.prenom LIKE :query OR c.adresse LIKE :query OR c.telephone LIKE :query OR c.email LIKE :query OR c.prix_totale LIKE :query')
+            ->andWhere('c.nom LIKE :query OR c.prenom LIKE :query OR c.adresse LIKE :query OR c.telephone LIKE :query ')
             ->setParameter('query', '%'.$query.'%')
             ->getQuery()
             ->getResult();

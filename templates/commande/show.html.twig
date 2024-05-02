@@ -11,6 +11,7 @@
             <li class="breadcrumb-item active text-white">Checkout</li>
         </ol>
     </div>
+    <br>
     <!-- Single Page Header End -->
 
     <div class="container">
@@ -28,6 +29,13 @@
                                 <a href="{{ path('app_commande_delete', {'id': commande.idCommande}) }}" class="btn btn-danger">Supprimer</a>
                                 <a href="{{ path('app_Commande_update', {'id': commande.idCommande}) }}" class="btn btn-primary">Modifier</a>
                                 
+                                <!-- Bouton pour générer le QR code -->
+                                <a href="{{ path('app_QrCode', {'id': commande.idCommande}) }}" class="btn btn-warning">QR Code</a>
+                                
+                                <!-- Ajouter un lien vers la génération PDF avec un identifiant unique -->
+                                <!-- Template Twig -->
+                                  <a href="#" class="btn btn-success generate-pdf" data-commande-id="{{ commande.idCommande }}">PDF</a>
+
                             </div>
                         </li>
                     {% endfor %}
@@ -35,4 +43,23 @@
             </div>
         </div>
     </div>
+
+    <!-- Script jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+       // Script jQuery
+$(document).ready(function(){
+    $('.generate-pdf').click(function(e){
+        e.preventDefault();
+        var commandeId = $(this).data('commande-id');
+        generatePdf(commandeId);
+    });
+
+    function generatePdf(id) {
+        // Redirection vers la route de génération PDF avec l'ID de la commande
+        window.location.href = "{{ path('generate_pdf', {'id': '_id_'}) }}".replace('_id_', id);
+    }
+});
+    </script>
+
 {% endblock %}
