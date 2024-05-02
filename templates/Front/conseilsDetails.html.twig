@@ -22,14 +22,29 @@
                                 <p class="mb-3">Category: {{ c.idTypec.nomtypec }}</p>
                                 <p class="mb-3">Created At: {{ c.datecreation|date('Y-m-d') }}</p>
 
+<div class="d-flex mb-4">
+    {% set totalStars = 5 %}
+    {% set filledStars = averageRating|round(0, 'ceil') %}
 
-                                <div class="d-flex mb-4">
-                                    <i class="fa fa-star text-secondary"></i>
-                                    <i class="fa fa-star text-secondary"></i>
-                                    <i class="fa fa-star text-secondary"></i>
-                                    <i class="fa fa-star text-secondary"></i>
-                                    <i class="fa fa-star"></i>
-                                </div>
+    {% if filledStars > totalStars %}
+        {% set filledStars = totalStars %}
+    {% endif %}
+
+    {% set emptyStars = totalStars - filledStars %}
+
+    {% for i in range(1, filledStars) %}
+        <i class="fa fa-star text-secondary"></i>
+    {% endfor %}
+
+    {% for i in range(1, emptyStars) %}
+    <i class="fa fa-star"></i>
+        
+    {% endfor %}
+
+    <p class="mb-3"> ({{ numberReview }})</p>
+</div>
+
+
 
 
                                 <p class="mb-4">{{ c.description }}</p>
@@ -51,43 +66,33 @@
                                     </div>
 
 
-                                    <div class="tab-pane" id="nav-mission" role="tabpanel" aria-labelledby="nav-mission-tab">
-                                        <div class="d-flex">
-                                            <img src="img/avatar.jpg" class="img-fluid rounded-circle p-3" style="width: 100px; height: 100px;" alt="">
+                                    <div class="review-list-container">
+                                       
+                                      {% for review in reviewsC %}
+                                        <div class="d-flex shadowR">
+                                            <img src="{{ asset('Front/assets/img/user.png')}} " class="img-fluid rounded-circle p-3" style="width: 100px; height: 100px;" alt="">
                                             <div class="">
-                                                <p class="mb-2" style="font-size: 14px;">April 12, 2024</p>
-                                                <div class="d-flex justify-content-between">
-                                                    <h5>Jason Smith</h5>
-                                                    <div class="d-flex pe-2">
-                                                        <i class="fa fa-star text-secondary"></i>
-                                                        <i class="fa fa-star text-secondary"></i>
-                                                        <i class="fa fa-star text-secondary"></i>
-                                                        <i class="fa fa-star text-secondary"></i>
-                                                        <i class="fa fa-star"></i>
+                                                <p class="mb-2" style="font-size: 14px;">{{ review.datecreation|date('Y-m-d') }}</p>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <h5>{{ review.titile }}</h5>
+                                                    <div class="d-flex mb-3" style="margin-left:400px;">
+                                                        {% set starCount = review.value %}
+                                                        {% for i in 1..5 %}
+                                                            {% if i <= starCount %}
+                                                                <i class="fa fa-star text-secondary"></i>
+                                                            {% else %}
+                                                                <i class="fa fa-star"></i>
+                                                            {% endif %}
+                                                        {% endfor %}
                                                     </div>
                                                 </div>
-                                                <p>The generated Lorem Ipsum is therefore always free from repetition injected humour, or non-characteristic 
-                                                    words etc. Susp endisse ultricies nisi vel quam suscipit </p>
+                                                <p>{{ review.comments }}</p>
                                             </div>
                                         </div>
-                                        <div class="d-flex">
-                                            <img src="img/avatar.jpg" class="img-fluid rounded-circle p-3" style="width: 100px; height: 100px;" alt="">
-                                            <div class="">
-                                                <p class="mb-2" style="font-size: 14px;">April 12, 2024</p>
-                                                <div class="d-flex justify-content-between">
-                                                    <h5>Sam Peters</h5>
-                                                    <div class="d-flex pe-2">
-                                                        <i class="fa fa-star text-secondary"></i>
-                                                        <i class="fa fa-star text-secondary"></i>
-                                                        <i class="fa fa-star text-secondary"></i>
-                                                        <i class="fa fa-star"></i>
-                                                        <i class="fa fa-star"></i>
-                                                    </div>
-                                                </div>
-                                                <p class="text-dark">The generated Lorem Ipsum is therefore always free from repetition injected humour, or non-characteristic 
-                                                    words etc. Susp endisse ultricies nisi vel quam suscipit </p>
-                                            </div>
-                                        </div>
+                                        <br><br>
+                                    {% endfor %}
+
+
                                     </div>
                                     <div class="tab-pane" id="nav-vision" role="tabpanel">
                                         <p class="text-dark">Tempor erat elitr rebum at clita. Diam dolor diam ipsum et tempor sit. Aliqu diam
@@ -99,36 +104,42 @@
 
 
                             </div>
-<form action="#" id="reviewForm">
+  {{ form_start(form, {'attr': {'id': 'reviewForm'}}) }}
     <h4 class="mb-5 fw-bold">Leave a Review</h4>
     <div class="row g-4">
         <div class="col-lg-10">
             <div class="border-bottom rounded">
-                <input type="text" class="form-control border-0 me-4" placeholder="Your Title *">
+                {{ form_row(form.titile) }}
             </div>
         </div>
         <div class="col-lg-12">
             <div class="border-bottom rounded my-4">
-                <textarea name="comment" class="form-control border-0" cols="30" rows="8" placeholder="Your Comments *" spellcheck="false"></textarea>
+                {{ form_row(form.comments) }}
             </div>
         </div>
         <div class="col-lg-12">
-            <div class="d-flex justify-content-between py-3 mb-5">
-                <div class="d-flex align-items-center">
-                    <p class="mb-0 me-3">Please rate:</p>
-                    <div class="star-rating">
-                        <i class="star fa fa-star" data-value="1"></i>
-                        <i class="star fa fa-star" data-value="2"></i>
-                        <i class="star fa fa-star" data-value="3"></i>
-                        <i class="star fa fa-star" data-value="4"></i>
-                        <i class="star fa fa-star" data-value="5"></i>
-                    </div>
+            <div class="d-flex align-items-center">
+                <p class="mb-0 me-3">Please rate:</p>
+                <div class="star-rating">
+                    {% for i in 1..5 %}
+                        <i class="star fas fa-star" data-value="{{ i }}"></i>
+                    {% endfor %}
                 </div>
+            </div>
+        </div>
+        {# Hidden input field for storing the selected rating (value) #}
+        {{ form_row(form.value) }}
+        <div class="col-lg-12">
+            <div class="d-flex justify-content-between py-3 mb-5">
                 <button type="submit" class="btn border border-secondary text-primary rounded-pill px-4 py-3">Post Comment</button>
             </div>
         </div>
     </div>
-</form>
+    {{ form_end(form) }}
+
+
+
+
 
 
 
@@ -171,19 +182,11 @@
                                 <div class="mb-4">
                                     <h4>Categories</h4>
 <ul class="list-unstyled fruite-categorie">
-    <li>
-        <div class="d-flex justify-content-between fruite-name">
-            <a href="{{ path('getAllFront') }}">Toutes les Catégories</a>
-            <span>({{ number }})</span>
-        </div>
-    </li>
-    {% for category in categories %}
         <li>
             <div class="d-flex justify-content-between fruite-name">
-                <a href="{{ path('getAllFront', {'category': category.idtypec}) }}">{{ category.nomtypec }}</a>
+             
             </div>
         </li>
-    {% endfor %}
 </ul>
 
                                 </div>
@@ -230,28 +233,57 @@
             
         </div>
 
-        <script>
-        document.addEventListener('DOMContentLoaded', function() {
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
     const stars = document.querySelectorAll('.star');
-    const ratingInput = document.createElement('input');
-    ratingInput.type = 'hidden';
-    ratingInput.name = 'rating';
-    document.querySelector('#reviewForm').appendChild(ratingInput);
+    const ratingInput = document.querySelector('.rating-input');
 
     stars.forEach(star => {
         star.addEventListener('click', () => {
             const ratingValue = parseInt(star.dataset.value);
+            console.log(`Clicked star with value: ${ratingValue}`); // Log the clicked rating value
+
+            // Update the value of the hidden input field
             ratingInput.value = ratingValue;
+
+            // Update star colors based on rating
             stars.forEach(s => {
-                if (parseInt(s.dataset.value) <= ratingValue) {
-                    s.classList.add('text-warning');
-                } else {
-                    s.classList.remove('text-warning');
-                }
+                const value = parseInt(s.dataset.value);
+                s.classList.toggle('text-warning', value <= ratingValue);
             });
+
+            console.log(`Hidden input value set to: ${ratingInput.value}`); // Log the updated hidden input value
         });
     });
 });
+
+
 </script>
+
+<style>
+.shadowR {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+    .star-rating {
+        font-size: 24px; /* Adjust the size of stars as needed */
+    }
+
+    .star {
+        cursor: pointer;
+        color: #ccc; /* Default star color */
+    }
+
+    .star.text-warning {
+        color: orange; /* Color for selected stars */
+    }
+
+    .review-list-container {
+    max-height: 400px; /* Set a maximum height for the review list container */
+    overflow-y: auto; /* Enable vertical scrolling */
+    padding-right: 10px; /* Add some padding to accommodate the scroll bar */
+}
+
+</style>
 
 {% endblock %}

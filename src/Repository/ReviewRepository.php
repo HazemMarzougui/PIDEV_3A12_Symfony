@@ -1,19 +1,13 @@
 <?php
 
+// src/Repository/ReviewRepository.php
+
 namespace App\Repository;
 
 use App\Entity\Review;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-/**
- * @extends ServiceEntityRepository<Review>
- *
- * @method Review|null find($id, $lockMode = null, $lockVersion = null)
- * @method Review|null findOneBy(array $criteria, array $orderBy = null)
- * @method Review[]    findAll()
- * @method Review[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- */
 class ReviewRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -21,28 +15,68 @@ class ReviewRepository extends ServiceEntityRepository
         parent::__construct($registry, Review::class);
     }
 
-//    /**
-//     * @return Review[] Returns an array of Review objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('r')
-//            ->andWhere('r.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('r.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    /**
+     * Retrieve reviews associated with a specified Conseil.
+     *
+     * @param int $conseilId The ID of the Conseil entity
+     * @return Review[] Returns an array of Review entities
+     */
+    public function findReviewsByConseilId(int $conseilId): array
+    {
+        return $this->createQueryBuilder('r')
+            ->andWhere('r.idConseil = :conseilId')
+            ->setParameter('conseilId', $conseilId)
+            ->getQuery()
+            ->getResult();
+    }
 
-//    public function findOneBySomeField($value): ?Review
-//    {
-//        return $this->createQueryBuilder('r')
-//            ->andWhere('r.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+
+public function reviewsCount(): int
+{
+    return $this->createQueryBuilder('r')
+        ->select('COUNT(r.idReview)')
+        ->getQuery()
+        ->getSingleScalarResult();
+}
+
+public function getAverageReviewValuesByConseil()
+{
+    return $this->createQueryBuilder('r')
+        ->select('c.nomConseil as conseilName', 'AVG(r.value) as averageValue')
+        ->leftJoin('r.idConseil', 'c')
+        ->groupBy('c.idConseil')
+        ->getQuery()
+        ->getResult();
+}
+
+public function countReviewsByConseilId(int $conseilId): int
+{
+    return $this->createQueryBuilder('r')
+        ->select('COUNT(r.idReview)')
+        ->andWhere('r.idConseil = :conseilId')
+        ->setParameter('conseilId', $conseilId)
+        ->getQuery()
+        ->getSingleScalarResult();
+}
+
+public function getRatingDistribution(): array
+{
+    return $this->createQueryBuilder('r')
+        ->select('r.value, COUNT(r.idReview) AS reviewCount')
+        ->groupBy('r.value')
+        ->orderBy('r.value', 'ASC')
+        ->getQuery()
+        ->getResult();
+}
+
+public function getAverageRatingByConseil(int $conseilId): ?float
+    {
+        $query = $this->createQueryBuilder('r')
+            ->select('AVG(r.value) AS averageRating')
+            ->andWhere('r.idConseil = :conseilId')
+            ->setParameter('conseilId', $conseilId)
+            ->getQuery();
+
+        return $query->getSingleScalarResult();
+    }
 }

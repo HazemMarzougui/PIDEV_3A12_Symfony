@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Conseil;
 use App\Repository\ReviewRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -42,9 +43,9 @@ class Review
     private $value;
 
     /**
-     * @var \DateTime|null
+     * @var \DateTime
      *
-     * @ORM\Column(name="dateCreation", type="datetime", nullable=true, options={"default"="CURRENT_TIMESTAMP"})
+     * @ORM\Column(name="dateCreation", type="datetime", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
      */
     private $datecreation = 'CURRENT_TIMESTAMP';
 
@@ -104,7 +105,7 @@ class Review
         return $this->datecreation;
     }
 
-    public function setDatecreation(?\DateTimeInterface $datecreation): static
+    public function setDatecreation(\DateTimeInterface $datecreation): static
     {
         $this->datecreation = $datecreation;
 

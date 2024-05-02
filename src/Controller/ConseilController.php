@@ -7,6 +7,7 @@ use App\Controller\ExcelController;
 use App\Entity\Typeconseil;
 use App\Entity\Produit;
 use App\Form\ConseilType;
+use App\Form\ReviewType;
 use App\Repository\ConseilRepository;
 use App\Repository\ProduitRepository;
 use App\Repository\TypeConseilRepository;
@@ -25,6 +26,8 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use App\Entity\Review;
+use App\Repository\ReviewRepository;
 
 
 
@@ -40,7 +43,7 @@ class ConseilController extends AbstractController
 
 
     #[Route('/conseils',name:'getAll')]
-    public function getAll(Request $request,ConseilRepository $repo,PaginatorInterface $paginator){
+    public function getAll(Request $request,ConseilRepository $repo,PaginatorInterface $paginator , ReviewRepository $repoReviews,){
         $conseil = new Conseil();
         $query = $repo->findAll();
         $conseils = $paginator->paginate(
@@ -48,7 +51,21 @@ class ConseilController extends AbstractController
             $request->query->getInt('page', 1), // Current page number, default to 1 if not provided
             3// Number of elements per page
         );
+
+        $labels = [];
+        $data = [];
+
+        foreach ($conseils as $conseil) {
+            $averageRating = $repoReviews->getAverageRatingByConseil($conseil->getIdConseil());
+            $labels[] = $conseil->getNomConseil(); // Assuming 'name' is a property of Conseil
+            $data[] = $averageRating ?? 0; // Use 0 if averageRating is null
+        }
+
+        // Prepare data for chart
+       
         $conseilsnumber = $repo->conseilsCount(); 
+        $numberReviews = $repoReviews->reviewsCount();
+        $latestConseilDate = $repo->findLatestConseilDateCreation();
         $conseilCountsByType = $repo->getConseilCountsByType();
         $formConseil = $this->createForm(ConseilType::class, $conseil);
         $formConseil->handleRequest($request);    
@@ -57,11 +74,17 @@ class ConseilController extends AbstractController
             'fc' => $formConseil->createView(),
             'number' => $conseilsnumber,
             'conseilCountsByType' => $conseilCountsByType,
+            'revCount' => $numberReviews,
+            'latestConseilDate' => $latestConseilDate,
+            'labels' => $labels,
+            'data' => $data,
+
+
         ]);
     }
 
     #[Route('/conseilsFront', name: 'getAllFront')]
-    public function getAllFront(Request $request, ConseilRepository $repo, TypeConseilRepository $repoType, PaginatorInterface $paginator)
+    public function getAllFront(Request $request, ConseilRepository $repo, TypeConseilRepository $repoType, PaginatorInterface $paginator,ReviewRepository $repoReviews)
     {
 
         $categoryId = $request->query->getInt('category', -1);
@@ -74,8 +97,10 @@ class ConseilController extends AbstractController
             $conseils = $repo->findAll();
         }
 
+        $averageReviewValue = $repoReviews->getAverageReviewValuesByConseil();
         $conseilsNumber = $repo->conseilsCount();
         $categories = $repoType->findAll();
+
 
         $conseilsPaginated = $paginator->paginate(
             $conseils,
@@ -85,18 +110,23 @@ class ConseilController extends AbstractController
         return $this->render('Front/conseils.html.twig', [
             'c' => $conseilsPaginated,
             'number' => $conseilsNumber,
-            'categories' => $categories 
+            'categories' => $categories ,
+            'averageValue' => $averageReviewValue
         ]);
     }
 
 
 
     #[Route('/sort-by-category-asc', name: 'sort_by_category_asc')]
-    public function sortByCategoryAsc(Request $request, ConseilRepository $repo, PaginatorInterface $paginator): Response
+    public function sortByCategoryAsc(Request $request, ConseilRepository $repo, PaginatorInterface $paginator,ReviewRepository $repoReviews): Response
     {
         // Fetch sorted conseils
         $conseil = new Conseil();
         $conseils = $repo->findAllSortedByCategoryAsc();
+        $numberReviews = $repoReviews->reviewsCount();
+        $latestConseilDate = $repo->findLatestConseilDateCreation();
+
+
 
         // Paginate sorted conseils
         $conseilsPaginated = $paginator->paginate(
@@ -114,6 +144,10 @@ class ConseilController extends AbstractController
             'fc' => $formConseil->createView(),
             'number' => $conseilsnumber,
             'conseilCountsByType' => $conseilCountsByType,
+            'revCount' => $numberReviews,
+            'latestConseilDate' => $latestConseilDate,
+
+
         ]);
     }
 
@@ -133,29 +167,62 @@ class ConseilController extends AbstractController
     }
 
 
-    #[Route('/conseilsFront/{idc}',name:'getOne')]
-    public function getOne(Request $request,ConseilRepository $repo,TypeConseilRepository $repoType,$idc){
+
+    #[Route('/conseilsFront/{idc}', name: 'getOne')]
+    public function getOne(Request $request, ConseilRepository $repo, ReviewRepository $repoReviews, $idc): Response
+    {
         $conseil = $repo->find($idc);
-        $categoryId = $request->query->getInt('category', -1);
-    
-        // Fetch artworks based on the selected category filter
-        if ($categoryId !== -1) {
-            $conseils = $repo->findBy(['idTypec' => $categoryId]);
-        } else {
-            // If no category is selected (-1), retrieve all artworks
-            $conseils = $repo->findAll();
+
+        if (!$conseil) {
+            throw $this->createNotFoundException('Conseil not found.');
         }
 
-        $conseilsNumber = $repo->conseilsCount();
-        $categories = $repoType->findAll();
+        // Retrieve reviews associated with the specified Conseil
+        $reviewsByConseil = $repoReviews->findReviewsByConseilId($conseil->getIdConseil());
+        $reviewsNumberByConseil = count($reviewsByConseil);
 
-        $conseilsNumber = $repo->conseilsCount();
-        return $this->render('Front/conseilsDetails.html.twig',[
-            'c'=>$conseil,
-            'number' => $conseilsNumber,
-            'categories' => $categories 
+        // Calculate average rating
+        $averageRating = 0;
+        if ($reviewsNumberByConseil > 0) {
+            $totalRating = 0;
+            foreach ($reviewsByConseil as $review) {
+                $totalRating += $review->getValue();
+            }
+            $averageRating = min(5, $totalRating / $reviewsNumberByConseil);
+        }
+
+        // Create new review instance for the form
+        $review = new Review();
+        $review->setIdConseil($conseil);
+        $review->setDatecreation(new \DateTime());
+
+        // Handle review form submission
+        $form = $this->createForm(ReviewType::class, $review);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $ratingValue = (int) $form->get('value')->getData();
+            $review->setValue($ratingValue);
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($review);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('getOne', ['idc' => $conseil->getIdConseil()]);
+        }
+
+        // Render the template with the necessary data
+        return $this->render('Front/conseilsDetails.html.twig', [
+            'c' => $conseil,
+            'reviewsC' => $reviewsByConseil,
+            'form' => $form->createView(),
+            'numberReview' => $reviewsNumberByConseil,
+            'averageRating' => $averageRating,
         ]);
     }
+    
+    
+    
 
     #[Route('/addConseil', name: 'conseil_add')]
     public function addConseil(Request $request, ConseilRepository $repo, EntityManagerInterface $entityManager,PaginatorInterface $paginator ,ParameterBagInterface $parameterBag): Response

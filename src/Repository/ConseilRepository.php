@@ -82,6 +82,30 @@ public function getConseilCountsByType(): array
             ->getResult();
     }
 
+
+    public function findLatestConseilDateCreation(): ?\DateTime
+    {
+        $query = $this->createQueryBuilder('c')
+            ->select('c.datecreation')
+            ->orderBy('c.datecreation', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery();
+
+        $result = $query->getOneOrNullResult();
+
+        if ($result !== null) {
+            // Extract the 'datecreation' value from the result array
+            $latestDateCreation = $result['datecreation'];
+
+            // Return the 'datecreation' as a \DateTime object
+            return $latestDateCreation;
+        }
+
+        return null;
+    }
+
+
+
    
 
 
