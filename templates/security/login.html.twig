@@ -10,22 +10,15 @@
         
         
         <div class="form-container sign-in">
-           <form method="post">
-    {% if error %}
-        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-    {% endif %}
+           <form method="POST">
 
-    {% if app.user %}
-        <div class="mb-3">
-            You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
-        </div>
-    {% endif %}
 
     <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
     <label for="inputEmail">Email</label>
     <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" autocomplete="email" required autofocus>
     <label for="inputPassword">Password</label>
     <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
+        <div class="h-captcha" data-sitekey="{{ hCaptchaSiteKey }}"></div>
 
     <input type="hidden" name="_csrf_token"
            value="{{ csrf_token('authenticate') }}"
@@ -34,16 +27,13 @@
     <button class="btn btn-lg btn-primary" type="submit">
         Sign in
     </button>
+                               <a href="{{ path('app_forgot')}}">Forget Your Password?</a>
+
 </form>
         </div>
         <div class="toggle-container">
             <div class="toggle">
-                <div class="toggle-panel toggle-left">
-                    <h1>Welcome Back!</h1>
-                    <p>Enter your personal details to use all of site features</p>
-                    <button class="hidden" id="login">Sign In </button>
-                    
-                </div>
+            
                 <div class="toggle-panel toggle-right">
                     <h1>Hello, Friend!</h1>
                     <p>Register with your personal details to use all of site features</p>
@@ -54,4 +44,6 @@
     </div>
 
     <script src="{{ asset('Dash_Admin/assets/js/script.js')}}"></script>
+    <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+
 {% endblock %}

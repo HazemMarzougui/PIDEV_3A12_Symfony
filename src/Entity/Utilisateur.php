@@ -7,6 +7,10 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Doctrine\ORM\Mapping as ORM;
+use App\Service\FileUploader;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\HttpFoundation\File\UploadedFile; // Add this line
+use Symfony\Component\HttpFoundation\File\File;
 
 /**
  * Utilisateur
@@ -17,6 +21,8 @@ use Doctrine\ORM\Mapping as ORM;
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
 class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    private $imagePath;
+
     /**
      * @var int
      *
@@ -98,9 +104,9 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     private $description;
 
     /**
-     * @var bool
+     * @var bool|null
      *
-     * @ORM\Column(name="is_actif", type="boolean", nullable=false)
+     * @ORM\Column(name="is_actif", type="boolean", nullable=true)
      */
     private $isActif;
 
@@ -213,17 +219,7 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getPhoto(): ?string
-    {
-        return $this->photo;
-    }
 
-    public function setPhoto(?string $photo): static
-    {
-        $this->photo = $photo;
-
-        return $this;
-    }
 
     public function getDescription(): ?string
     {
@@ -283,6 +279,40 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     public function getUserIdentifier(): string
     {
         return $this->email;
+    }
+  
+    public function getUsernameIdentifier(): string
+    {
+        return sprintf('%s %s', $this->nom, $this->prenom);
+    }
+     
+
+    /**
+     * @var File|null
+     */
+    private $photoFile;
+
+    public function getPhotoFile(): ?File
+    {
+        return $this->photoFile;
+    }
+
+    public function setPhotoFile(?File $photoFile): self
+    {
+        $this->photoFile = $photoFile;
+
+        return $this;
+    }
+    public function getPhoto(): ?string
+    {
+        return $this->photo;
+    }
+
+    public function setPhoto(?string $photo): self
+    {
+        $this->photo = $photo;
+
+        return $this;
     }
 
 }

@@ -2,9 +2,20 @@
 
 {% block body %}
 
-  <div class="page-header">
-      <h3 class="page-title">Gestion des Utilisateurs</h3>
-<a class="nav-link btn btn-success create-new-button" href="{{ path('user_add')}}" id="createbuttonDropdown" style="margin-left: -500px;" aria-expanded="false" >+ Créer Utilisateur</a>
+<div class="page-header">
+    <h3 class="page-title">Gestion des Utilisateurs</h3>
+    <div class="header-actions">
+        <a class="nav-link btn btn-success create-new-button" href="{{ path('user_add')}}" id="createbuttonDropdown" aria-expanded="false">+ Créer Utilisateur</a>
+    
+</div>
+
+<!-- Search Form -->
+<div class="search-form">
+    {{ form_start(searchForm, {'attr': {'class': 'form-inline my-2 my-lg-0'}}) }}
+    {{ form_row(searchForm.searchQuery, {'attr': {'class': 'form-control mr-sm-2', 'placeholder': 'Search'}}) }}
+    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+    {{ form_end(searchForm) }}
+</div>
 
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
@@ -64,43 +75,79 @@
               </div>
 
             </div>
-      </div>
+            
+<h1>User Statistics</h1>
+<canvas id="userChart" width="400" height="400"></canvas>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var ctx = document.getElementById('userChart').getContext('2d');
+        
+        var userChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Admins', 'Clients'],
+                datasets: [{
+                    label: 'User Distribution',
+                    data: [{{ adminCount }}, {{ clientCount }}],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.5)',
+                        'rgba(54, 162, 235, 0.5)',
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: {
+                        position: 'top', // Adjust legend position
+                    },
+                },
+                layout: {
+                    padding: {
+                        left: 50,
+                        right: 50,
+                        top: 50,
+                        bottom: 50
+                    }
+                },
+                responsive: false
+            }
+        });
+    });
+</script>
+
+
+
+</div>
 
       <!-- Modal -->
 
-
-
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<!-- Bootstrap CSS -->
 
-<!-- jQuery -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-    <style>
-    /* WebKit (Chrome, Safari, etc.) */
-    ::-webkit-scrollbar {
-        width: 10px;
-    }
-
-    ::-webkit-scrollbar-track {
-        background-color: #191c24;
-        border-radius: 10px;
-    }
-
-    ::-webkit-scrollbar-thumb {
-        background-color: #888;
-        border-radius: 10px;
-        border: 2px solid #191c24;
-    }
-
-    #conseilAddedModal {
-    position: fixed;
-    top: 0px; /* Adjust as needed */
-    right: 0px; /* Adjust as needed */
-    z-index: 1050; /* Ensure modal is on top of other elements */
+<style>
+::-webkit-scrollbar {
+    width: 10px;
 }
-    scrollbar-color: #888 #191c24;
+
+::-webkit-scrollbar-track {
+    background-color: #191c24;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 10px;
+    border: 2px solid #191c24;
+}
+
+#conseilAddedModal {
+    position: fixed;
+    top: 0px;
+    right: 0px;
+    z-index: 1050;
+}
+
+.scrollbar-color: #888 #191c24;
 </style>
-    {% endblock %}
+{% endblock %}

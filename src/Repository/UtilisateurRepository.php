@@ -6,6 +6,7 @@ use App\Entity\Utilisateur;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
+
 /**
  * @extends ServiceEntityRepository<Utilisateur>
  *
@@ -28,8 +29,57 @@ class UtilisateurRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+    public function findOneByEmail(string $email): ?Utilisateur
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.email = :email')
+            ->setParameter('email', $email)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 
+    public function countByRole($role): int
+    {
+        return $this->createQueryBuilder('u')
+            ->select('COUNT(u.id)')
+            ->where('u.role = :role')
+            ->setParameter('role', $role)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+    public function findBySearchQuery(string $searchQuery)
+{
+    return $this->createQueryBuilder('u')
+        ->andWhere('u.nom LIKE :query OR u.prenom LIKE :query')
+        ->setParameter('query', '%'.$searchQuery.'%')
+        ->getQuery()
+        ->getResult();
+}
+    /**
+     * Find all users sorted by the specified field.
+     *
+     * @param string $sortBy Field to sort by (e.g., 'name' or 'surname')
+     * @return Utilisateur[] Returns an array of Utilisateur objects
+     */
+    public function findAllSorted(string $sortBy): array
+    {
+        $qb = $this->createQueryBuilder('u');
 
+        // Sort by name
+        if ($sortBy === 'name') {
+            $qb->orderBy('u.nom', 'ASC');
+        }
+        // Sort by surname
+        elseif ($sortBy === 'surname') {
+            $qb->orderBy('u.prenom', 'ASC');
+        }
+        // Default to sorting by name
+        else {
+            $qb->orderBy('u.nom', 'ASC');
+        }
+
+        return $qb->getQuery()->getResult();
+    }
 //    /**
 //     * @return Utilisateur[] Returns an array of Utilisateur objects
 //     */
